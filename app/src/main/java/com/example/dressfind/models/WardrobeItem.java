@@ -1,4 +1,4 @@
-package com.example.dressfind;
+package com.example.dressfind.models;
 
 public class WardrobeItem {
 
