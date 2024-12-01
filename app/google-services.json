@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "689330835052",
+    "project_id": "dressfind-be56e",
+    "storage_bucket": "dressfind-be56e.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:689330835052:android:9fefb24dd77a2bdabc9249",
+        "android_client_info": {
+          "package_name": "com.example.dressfind"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyDRuLLZTtTy-0cn92og90XzMLMpPDJmfsA"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
