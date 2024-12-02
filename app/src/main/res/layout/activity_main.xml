@@ -6,11 +6,24 @@ android:layout_width="match_parent"
 android:layout_height="match_parent"
 tools:context=".activities.MainActivity">
 
-<FrameLayout
+<RelativeLayout
     android:id="@+id/container"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:layout_above="@+id/bottom_bar" />
+    android:layout_above="@+id/bottom_bar" >
+    <ImageView
+        android:id="@+id/captured_image"
+        android:layout_width="match_parent"
+        android:layout_height="300dp"
+        android:scaleType="fitCenter"
+        android:layout_alignParentTop="true" />
+    <ScrollView
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_below="@+id/captured_image">
+
+    </ScrollView>
+</RelativeLayout>
 
 <include
     android:id="@+id/bottom_bar"

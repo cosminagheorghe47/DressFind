@@ -33,6 +33,7 @@ android {
 }
 
 dependencies {
+    platform("com.google.firebase:firebase-bom:32.1.1")
     implementation ("com.google.firebase:firebase-auth:21.0.1")
     implementation ("com.google.firebase:firebase-firestore:24.0.0")
     implementation ("com.google.firebase:firebase-analytics:21.0.0")
