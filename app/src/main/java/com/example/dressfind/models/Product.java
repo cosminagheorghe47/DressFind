@@ -10,11 +10,12 @@ public class Product {
     private String Color;
     private Double Price;
     private String StoreID;
+    private String Category;
 
     public Product() {
     }
 
-    public Product(String productId, String scanId, String description, String image, String material, String color, Double price, String storeID) {
+    public Product(String productId, String scanId, String description, String image, String material, String color, Double price, String storeID, String Category) {
         ProductId = productId;
         ScanId = scanId;
         Description = description;
@@ -23,6 +24,7 @@ public class Product {
         Color = color;
         Price = price;
         StoreID = storeID;
+        Category = Category;
     }
 
     public String getProductId() {
@@ -87,5 +89,13 @@ public class Product {
 
     public void setStoreID(String storeID) {
         StoreID = storeID;
+    }
+
+    public String getCategory() {
+        return Category;
+    }
+
+    public void setCategory(String category) {
+        Category = category;
     }
 }
