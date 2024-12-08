@@ -10,11 +10,12 @@ public class WardrobeItem {
     private String name;
     private String scanId;
     private String userId;
+    private String Category;
 
     public WardrobeItem() {}
 
     public WardrobeItem(String itemId, String color, String description, String image,
-                        String material, String name, String scanId, String userId) {
+                        String material, String name, String scanId, String userId, String Category) {
         this.itemId = itemId;
         this.color = color;
         this.description = description;
@@ -23,6 +24,7 @@ public class WardrobeItem {
         this.name = name;
         this.scanId = scanId;
         this.userId = userId;
+        this.Category = Category;
     }
 
     public String getItemId() {
@@ -87,5 +89,13 @@ public class WardrobeItem {
 
     public void setUserId(String userId) {
         this.userId = userId;
+    }
+
+    public String getCategory() {
+        return Category;
+    }
+
+    public void setCategory(String category) {
+        Category = category;
     }
 }

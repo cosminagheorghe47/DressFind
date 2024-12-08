@@ -1,5 +1,7 @@
 package com.example.dressfind.models;
 
+import android.graphics.Matrix;
+
 public class ClothingItem {
 
     private String ItemId;
@@ -12,11 +14,12 @@ public class ClothingItem {
     private String Color;
     private Double Price;
     private String StoreId;
+    private String Category;
 
     public ClothingItem() {
     }
 
-    public ClothingItem(String itemId, String userId, String scanId, String name, String description, String image, String material, String color, Double price, String storeId) {
+    public ClothingItem(String itemId, String userId, String scanId, String name, String description, String image, String material, String color, Double price, String storeId, String Category) {
         ItemId = itemId;
         UserId = userId;
         ScanId = scanId;
@@ -27,6 +30,8 @@ public class ClothingItem {
         Color = color;
         Price = price;
         StoreId = storeId;
+        Category = Category;
+
     }
 
     public String getItemId() {
@@ -107,5 +112,13 @@ public class ClothingItem {
 
     public void setStoreId(String storeId) {
         StoreId = storeId;
+    }
+
+    public String getCategory() {
+        return Category;
+    }
+
+    public void setCategory(String category) {
+        Category = category;
     }
 }
