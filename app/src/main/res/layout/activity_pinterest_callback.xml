@@ -1,0 +1,110 @@
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    tools:context=".activities.PinterestCallbackActivity">
+
+  <TextView
+      android:id="@+id/pinterestProfileTV"
+      android:layout_width="wrap_content"
+      android:layout_height="wrap_content"
+      android:text="Your Pinterest Profile"
+      android:padding="20dp"
+      android:textSize="26sp"
+      app:layout_constraintEnd_toEndOf="parent"
+      app:layout_constraintStart_toStartOf="parent"
+      app:layout_constraintTop_toTopOf="parent" />
+
+  <androidx.cardview.widget.CardView
+      android:layout_width="350dp"
+      android:layout_height="wrap_content"
+      app:cardCornerRadius="30dp"
+      android:layout_margin="30dp"
+      app:layout_constraintBottom_toBottomOf="parent"
+      app:layout_constraintEnd_toEndOf="parent"
+      app:layout_constraintStart_toStartOf="parent"
+      app:layout_constraintTop_toTopOf="@+id/pinterestProfileTV">
+
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:layout_width="wrap_content"
+        android:paddingBottom="20dp"
+        android:layout_height="wrap_content">
+
+      <ImageView
+          android:id="@+id/ivProfileImage"
+          android:layout_width="300dp"
+          android:layout_height="300dp"
+          android:layout_margin="50dp"
+          android:layout_marginTop="16dp"
+          android:src="@drawable/ic_profile_default"
+          app:layout_constraintEnd_toEndOf="parent"
+          app:layout_constraintStart_toStartOf="parent"
+          app:layout_constraintTop_toTopOf="parent" />
+
+      <TextView
+          android:id="@+id/tvUsername"
+          android:layout_width="wrap_content"
+          android:layout_height="wrap_content"
+          android:layout_marginTop="8dp"
+          android:text="Username"
+          android:textAlignment="center"
+          android:textSize="24sp"
+          app:layout_constraintEnd_toEndOf="parent"
+          app:layout_constraintStart_toStartOf="parent"
+          app:layout_constraintTop_toBottomOf="@id/ivProfileImage" />
+
+      <TextView
+          android:id="@+id/tvBusinessName"
+          android:layout_width="wrap_content"
+          android:layout_height="wrap_content"
+          android:layout_marginTop="8dp"
+          android:text="Business Name"
+          android:textSize="24sp"
+          app:layout_constraintEnd_toEndOf="parent"
+          app:layout_constraintStart_toStartOf="parent"
+          app:layout_constraintTop_toBottomOf="@id/tvUsername" />
+
+      <TextView
+          android:id="@+id/tvFollowers"
+          android:layout_width="wrap_content"
+          android:layout_height="wrap_content"
+          android:text="Followers"
+          android:textSize="24sp"
+          app:layout_constraintEnd_toEndOf="parent"
+          app:layout_constraintStart_toStartOf="parent"
+          app:layout_constraintTop_toBottomOf="@id/tvBusinessName" />
+
+      <TextView
+          android:id="@+id/tvBoards"
+          android:layout_width="wrap_content"
+          android:layout_height="wrap_content"
+          android:text="Boards"
+          android:textSize="24sp"
+          app:layout_constraintEnd_toEndOf="parent"
+          app:layout_constraintStart_toStartOf="parent"
+          app:layout_constraintTop_toBottomOf="@id/tvFollowers" />
+
+      <TextView
+          android:id="@+id/tvPins"
+          android:layout_width="wrap_content"
+          android:layout_height="wrap_content"
+          android:text="Pins"
+          android:textSize="24sp"
+          app:layout_constraintEnd_toEndOf="parent"
+          app:layout_constraintStart_toStartOf="parent"
+          app:layout_constraintTop_toBottomOf="@id/tvBoards" />
+
+      <TextView
+          android:id="@+id/tvAbout"
+          android:layout_width="wrap_content"
+          android:layout_height="wrap_content"
+          android:layout_marginTop="16dp"
+          android:text="About"
+          android:textSize="24sp"
+          app:layout_constraintEnd_toEndOf="parent"
+          app:layout_constraintStart_toStartOf="parent"
+          app:layout_constraintTop_toBottomOf="@id/tvPins" />
+    </androidx.constraintlayout.widget.ConstraintLayout>
+  </androidx.cardview.widget.CardView>
+</androidx.constraintlayout.widget.ConstraintLayout>

@@ -2,21 +2,21 @@
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
-    tools:context=".MainActivity"
+    tools:context=".activities.MainActivity"
     android:layout_width="match_parent"
-    android:layout_height="56dp"
+    android:layout_height="80dp"
     android:orientation="horizontal"
     android:background="#FFFFFF"
     android:elevation="4dp"
     android:gravity="center">
 
     <ImageView
-        android:id="@+id/left_icon"
+        android:id="@+id/home_icon"
         android:layout_width="24dp"
         android:layout_height="24dp"
         android:layout_margin="16dp"
         android:src="@drawable/home_icon"
-        android:contentDescription="Left Icon" />
+        android:contentDescription="Home Icon" />
 
     <View
         android:layout_width="0dp"
@@ -37,10 +37,10 @@
         android:layout_weight="1" />
 
     <ImageView
-        android:id="@+id/right_icon"
+        android:id="@+id/collection_icon"
         android:layout_width="24dp"
         android:layout_height="24dp"
         android:layout_margin="16dp"
         android:src="@drawable/collection_icon"
-        android:contentDescription="Right Icon" />
+        android:contentDescription="Collection Icon" />
 </LinearLayout>
