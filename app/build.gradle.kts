@@ -39,13 +39,13 @@ dependencies {
     implementation ("com.google.firebase:firebase-database:20.0.2")
     implementation("com.google.firebase:firebase-analytics")
     implementation ("com.squareup.picasso:picasso:2.71828")
-
+    implementation ("com.google.firebase:firebase-appcheck")
     implementation ("androidx.exifinterface:exifinterface:1.3.0")
     implementation ("androidx.activity:activity:1.9.3")
-    platform("com.google.firebase:firebase-bom:33.7.0")
-    implementation ("com.google.firebase:firebase-auth:23.1.0")
-    implementation ("com.google.firebase:firebase-firestore:25.1.1")
-    implementation ("com.google.firebase:firebase-analytics:22.1.2")
+    implementation (platform("com.google.firebase:firebase-bom:33.7.0"))
+    implementation ("com.google.firebase:firebase-auth:21.0.1")
+    implementation ("com.google.firebase:firebase-firestore:24.0.0")
+    implementation ("com.google.firebase:firebase-analytics:21.0.0")
 
     implementation("androidx.appcompat:appcompat:1.7.0")
     implementation("com.google.android.material:material:1.12.0")
