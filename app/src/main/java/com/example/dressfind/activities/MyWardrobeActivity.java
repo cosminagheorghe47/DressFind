@@ -32,6 +32,8 @@ public class MyWardrobeActivity extends AppCompatActivity {
     private CategoryAdapter categoryAdapter;
     private WardrobeItemAdapter wardrobeItemAdapter;
 
+    private Button button_generate_outfit;
+
     private final List<String> categories = Arrays.asList("T-Shirts", "Shirts", "Pullovers", "Pants", "Dresses", "Coats", "Sneakers", "Sandals", "Boots", "Bags");
     private final List<WardrobeItem> wardrobeItems = new ArrayList<>();
 
@@ -54,12 +56,14 @@ public class MyWardrobeActivity extends AppCompatActivity {
         wardrobeItemAdapter = new WardrobeItemAdapter(this, wardrobeItems);
         recyclerViewClothes.setAdapter(wardrobeItemAdapter);
 
+        button_generate_outfit = findViewById(R.id.button_generate_outfit);
+
+        button_generate_outfit.setOnClickListener(v -> {
+            Intent intent = new Intent(MyWardrobeActivity.this, GenerateOutfitActivity.class);
+            startActivity(intent);
+        });
+
         loadCategories();
-
-
-
-
-
 
 
         bottomNavigationView = findViewById(R.id.includeNavBar);

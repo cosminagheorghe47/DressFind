@@ -35,6 +35,7 @@ android {
 dependencies {
     implementation ("androidx.exifinterface:exifinterface:1.3.0")
     implementation ("androidx.activity:activity:1.9.3")
+    implementation("com.google.firebase:firebase-storage:21.0.1")
     platform("com.google.firebase:firebase-bom:33.7.0")
     implementation ("com.google.firebase:firebase-auth:23.1.0")
     implementation ("com.google.firebase:firebase-firestore:25.1.1")

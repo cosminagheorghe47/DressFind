@@ -1,0 +1,154 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+xmlns:app="http://schemas.android.com/apk/res-auto"
+xmlns:tools="http://schemas.android.com/tools"
+android:layout_width="match_parent"
+android:layout_height="match_parent"
+android:orientation="vertical"
+tools:context=".activities.GenerateOutfitActivity"
+android:id="@+id/parent">
+
+<RelativeLayout
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:orientation="vertical"
+    android:id="@+id/header"
+    android:background="@drawable/background_gradient">
+
+    <RelativeLayout
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_centerInParent="true"
+        android:id="@+id/title">
+
+        <RelativeLayout
+            android:layout_width="140dp"
+            android:layout_height="70dp"
+            android:id="@+id/text_layout">
+
+
+            <EditText
+                android:id="@+id/editText_title"
+                android:layout_width="140dp"
+                android:layout_height="70dp"
+                android:gravity="center"
+                android:hint="Enter title"
+                android:text="New Outfit"
+                android:textSize="24sp"
+                android:textColor="@android:color/black"
+                android:textStyle="bold"
+                android:background="@android:color/transparent"
+                android:focusable="false"
+                android:cursorVisible="false"
+                android:singleLine="true" />
+
+
+        </RelativeLayout>
+
+        <ImageView
+            android:layout_width="30dp"
+            android:layout_height="30dp"
+            android:id="@+id/edit_button"
+            android:src="@drawable/edit"
+            android:layout_toEndOf="@id/text_layout"
+            android:layout_marginLeft= "0dp"
+            android:layout_marginTop="20dp"
+            />
+
+    </RelativeLayout>
+
+
+    <RelativeLayout
+        android:layout_width="60dp"
+        android:layout_height="60dp"
+        android:layout_toEndOf="@id/title"
+        android:layout_marginLeft= "60dp"
+        android:layout_marginTop="5dp">
+
+        <ImageView
+            android:layout_width="40dp"
+            android:layout_height="40dp"
+            android:id="@+id/generate_button"
+            android:src="@drawable/outline_check_24"
+            android:layout_centerInParent="true"
+            />
+
+    </RelativeLayout>
+
+
+    <RelativeLayout
+        android:layout_width="60dp"
+        android:layout_height="60dp"
+        android:layout_toStartOf="@id/title"
+        android:layout_marginRight="65dp"
+        android:layout_marginTop="5dp">
+
+        <ImageView
+            android:layout_width="20dp"
+            android:layout_height="20dp"
+            android:id="@+id/cancel_button"
+            android:src="@drawable/close"
+            android:layout_centerInParent="true"
+            />
+
+    </RelativeLayout>
+
+
+
+</RelativeLayout>
+
+    <FrameLayout
+        android:id="@+id/canvas_outfit"
+        android:layout_width="match_parent"
+        android:layout_height="430dp"
+        android:layout_below="@id/header"
+        android:background="@color/white"/>
+
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:id="@+id/recycler_categories"
+        android:layout_below="@id/canvas_outfit"
+        android:background="@drawable/background_gradient">
+
+        <LinearLayout
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:padding="8dp">
+
+
+            <androidx.recyclerview.widget.RecyclerView
+                android:id="@+id/recyclerView_categories"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal"
+                android:scrollbars="horizontal" />
+
+        </LinearLayout>
+
+
+    </LinearLayout>
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:id="@+id/grid"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:layout_below="@+id/recycler_categories"
+        android:layout_alignParentBottom="true">
+
+        <androidx.recyclerview.widget.RecyclerView
+            android:id="@+id/recyclerView_clothes"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:orientation="vertical"
+            android:scrollbars="vertical"
+            android:padding="20dp" />
+
+    </LinearLayout>
+
+
+</RelativeLayout>
