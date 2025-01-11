@@ -30,6 +30,9 @@
             android:value="AIzaSyCSS-WiCPU2UF6Znol71aIw-da6dlQfnz0" />
 
         <activity
+            android:name=".activities.GenerateOutfitActivity"
+            android:exported="false" />
+        <activity
             android:name=".activities.PinterestCallbackActivity"
             android:exported="true">
             <intent-filter>
