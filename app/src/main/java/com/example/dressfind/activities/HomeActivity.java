@@ -76,6 +76,9 @@ public class HomeActivity extends AppCompatActivity {
             if (item.getItemId() == R.id.nav_home) {
                 return true;
             } else if (item.getItemId() == R.id.nav_outfits) {
+                Intent scanIntent = new Intent(HomeActivity.this, MyOutfitsActivity.class);
+                startActivity(scanIntent);
+                overridePendingTransition(0, 0);
                 return true;
             } else if (item.getItemId() == R.id.nav_scan) {
                 Intent scanIntent = new Intent(HomeActivity.this, MainActivity.class);

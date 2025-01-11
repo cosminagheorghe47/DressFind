@@ -1,8 +1,13 @@
 package com.example.dressfind.models;
 
+import android.os.Parcel;
+import android.os.Parcelable;
+
+import androidx.annotation.NonNull;
+
 import java.util.Date;
 
-public class Outfit {
+public class Outfit implements Parcelable {
 
     private String OutfitId;
     private String UserId;
@@ -10,17 +15,47 @@ public class Outfit {
     private Date CreationDate;
     private String Description;
     private Date ScheduledDate;
+    private String Image;
 
     public Outfit() {
     }
 
-    public Outfit(String outfitId, String userId, String name, Date creationDate, String description, Date scheduledDate) {
+    public Outfit(String outfitId, String userId, String name, Date creationDate, String description, Date scheduledDate, String image) {
         OutfitId = outfitId;
         UserId = userId;
         Name = name;
         CreationDate = creationDate;
         Description = description;
         ScheduledDate = scheduledDate;
+        Image = image;
+    }
+
+    protected Outfit(Parcel in) {
+        OutfitId = in.readString();
+        UserId = in.readString();
+        Name = in.readString();
+        Description = in.readString();
+        Image = in.readString();
+    }
+
+    public static final Creator<Outfit> CREATOR = new Creator<Outfit>() {
+        @Override
+        public Outfit createFromParcel(Parcel in) {
+            return new Outfit(in);
+        }
+
+        @Override
+        public Outfit[] newArray(int size) {
+            return new Outfit[size];
+        }
+    };
+
+    public String getImage() {
+        return Image;
+    }
+
+    public void setImage(String image) {
+        Image = image;
     }
 
     public String getOutfitId() {
@@ -69,5 +104,19 @@ public class Outfit {
 
     public void setScheduledDate(Date scheduledDate) {
         ScheduledDate = scheduledDate;
+    }
+
+    @Override
+    public int describeContents() {
+        return 0;
+    }
+
+    @Override
+    public void writeToParcel(@NonNull Parcel dest, int flags) {
+        dest.writeString(OutfitId);
+        dest.writeString(UserId);
+        dest.writeString(Name);
+        dest.writeString(Description);
+        dest.writeString(Image);
     }
 }

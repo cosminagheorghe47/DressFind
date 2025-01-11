@@ -33,6 +33,7 @@ import com.example.dressfind.recyclerviews.CategoryAdapter;
 import com.example.dressfind.recyclerviews.DragTouchListener;
 import com.example.dressfind.recyclerviews.SmallWardrobeItemAdapter;
 import com.example.dressfind.recyclerviews.WardrobeItemAdapter;
+import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.QueryDocumentSnapshot;
 import com.squareup.picasso.Picasso;
@@ -66,12 +67,15 @@ public class GenerateOutfitActivity extends AppCompatActivity {
     private final List<WardrobeItem> selectedItemsOnCanvas = new ArrayList<>();
 
     private FirebaseFirestore db;
+    private FirebaseAuth auth;
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_generate_outfit);
         db = FirebaseFirestore.getInstance();
+        auth = FirebaseAuth.getInstance();
 
         recyclerViewCategories = findViewById(R.id.recyclerView_categories);
         recyclerViewCategories.setLayoutManager(new LinearLayoutManager(this, LinearLayoutManager.HORIZONTAL, false));
@@ -90,6 +94,13 @@ public class GenerateOutfitActivity extends AppCompatActivity {
         edit_button = findViewById(R.id.title);
 
         loadCategories();
+
+        if (auth.getCurrentUser() == null) {
+            Intent intent = new Intent(this, LoginActivity.class); // Redirecționează către ecranul de autentificare
+            startActivity(intent);
+            finish();
+            return;
+        }
 
         cancel_button.setOnClickListener(v -> {
             Intent intent = new Intent(GenerateOutfitActivity.this, HomeActivity.class);
@@ -130,9 +141,15 @@ public class GenerateOutfitActivity extends AppCompatActivity {
         // Obținem data curentă
         Date currentDate = new Date();
 
+        String userId = auth.getCurrentUser() != null ? auth.getCurrentUser().getUid() : null;
+        if (userId == null) {
+            Toast.makeText(this, "User not authenticated", Toast.LENGTH_SHORT).show();
+            return;
+        }
+
         // Creăm obiectul Outfit
         Outfit outfit = new Outfit();
-        outfit.setUserId("currentUserId"); // Înlocuiește cu ID-ul real al utilizatorului
+        outfit.setUserId(userId);
         outfit.setName(outfitName);
         outfit.setCreationDate(currentDate);
         outfit.setScheduledDate(currentDate);
@@ -158,6 +175,10 @@ public class GenerateOutfitActivity extends AppCompatActivity {
             FirebaseFirestore db = FirebaseFirestore.getInstance();
             db.collection("outfitsItems").add(outfitItems);
         }
+        Intent intent = new Intent(GenerateOutfitActivity.this, HomeActivity.class);
+        startActivity(intent);
+        finish();
+
     }
 
 
