@@ -30,6 +30,14 @@ public class LoginActivity extends AppCompatActivity {
 
         FirebaseAuth auth = FirebaseAuth.getInstance();
 
+        FirebaseUser currentUser = auth.getCurrentUser();
+        if (currentUser != null) {
+            Log.i("LoginActivity", "User is already signed in: " + currentUser.getEmail());
+            startActivity(new Intent(LoginActivity.this, HomeActivity.class));
+            finish();
+        }
+
+
         emailView = findViewById(R.id.email);
         passwordView = findViewById(R.id.password);
         loginButton = findViewById(R.id.loginButton);
