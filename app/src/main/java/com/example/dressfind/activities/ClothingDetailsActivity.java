@@ -11,16 +11,16 @@ import androidx.core.view.WindowInsetsCompat;
 
 import com.example.dressfind.R;
 import com.example.dressfind.models.Outfit;
+import com.example.dressfind.models.WardrobeItem;
 
-public class OutfitDetailsActivity extends AppCompatActivity {
+public class ClothingDetailsActivity extends AppCompatActivity {
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_outfit_details);
+        setContentView(R.layout.activity_clothing_details);
 
         Intent intent = getIntent();
-        Outfit outfit = intent.getParcelableExtra("currentOutfit");
-
+        WardrobeItem wardrobeItem = intent.getParcelableExtra("currentItem");
     }
 }
