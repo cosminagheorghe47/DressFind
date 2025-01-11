@@ -1,6 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
-
     xmlns:tools="http://schemas.android.com/tools"
     package="com.example.dressfind">
 
@@ -11,7 +10,7 @@
     <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION" />
     <uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION" />
     <uses-permission android:name="android.permission.CAMERA" />
-    <uses-permission android:name="android.permission.INTERNET"/>
+    <uses-permission android:name="android.permission.INTERNET" />
 
     <application
         android:allowBackup="true"
@@ -22,8 +21,16 @@
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/Theme.DressFind"
-
         tools:targetApi="31">
+        <activity
+            android:name=".activities.ClothingDetailsActivity"
+            android:exported="false" />
+        <activity
+            android:name=".activities.OutfitDetailsActivity"
+            android:exported="false" />
+        <activity
+            android:name=".activities.MyOutfitsActivity"
+            android:exported="false" />
 
         <meta-data
             android:name="com.google.android.geo.API_KEY"
@@ -37,10 +44,13 @@
             android:exported="true">
             <intent-filter>
                 <action android:name="android.intent.action.VIEW" />
+
                 <category android:name="android.intent.category.DEFAULT" />
                 <category android:name="android.intent.category.BROWSABLE" />
-                <data android:scheme="com.example.dressfind"
-                    android:host="home" />
+
+                <data
+                    android:host="home"
+                    android:scheme="com.example.dressfind" />
             </intent-filter>
         </activity>
         <activity
@@ -58,9 +68,7 @@
         </activity>
         <activity
             android:name=".activities.RegisterActivity"
-            android:exported="true">
-
-        </activity>
+            android:exported="true" />
         <activity
             android:name=".activities.LoginActivity"
             android:exported="true">
@@ -69,9 +77,7 @@
 
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
-
         </activity>
-
         <activity
             android:name=".activities.MainActivity"
             android:exported="true" />
