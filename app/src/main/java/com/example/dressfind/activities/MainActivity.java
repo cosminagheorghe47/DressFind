@@ -37,6 +37,7 @@ import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.storage.FirebaseStorage;
 import com.google.firebase.storage.StorageReference;
 import com.google.firebase.storage.UploadTask;
+import com.squareup.picasso.Picasso;
 
 import java.io.ByteArrayOutputStream;
 import java.text.SimpleDateFormat;
@@ -80,10 +81,39 @@ public class MainActivity extends AppCompatActivity implements ProductSearchTask
 
         productSearchTask = new ProductSearchTask();
         productSearchTask.setCallback(this);
+        Intent intent = getIntent();
+        boolean fromHistory = intent.getBooleanExtra("fromHistory", false);
 
+        if (fromHistory) {
+            String imageUrl = intent.getStringExtra("imageUrl");
+            if (imageUrl != null) {
+                fetchBitmapFromUrl(imageUrl, (bitmap, e) -> {
+                    if (e == null) {
+                        uploadToFirebase(bitmap);
+                        capturedImage.setImageBitmap(bitmap);
+                    } else {
+                        Log.e("MainActivity", "Error fetching bitmap", e);
+                    }
+                });
+            }
+        } else {
+            showPopup();
+        }
 
+    }
+    private void fetchBitmapFromUrl(String imageUrl, BitmapCallback callback) {
+        new Thread(() -> {
+            try {
+                Bitmap bitmap = Picasso.get().load(imageUrl).get();
+                runOnUiThread(() -> callback.onResult(bitmap, null));
+            } catch (Exception e) {
+                runOnUiThread(() -> callback.onResult(null, e));
+            }
+        }).start();
+    }
 
-        showPopup();
+    interface BitmapCallback {
+        void onResult(Bitmap bitmap, Exception e);
     }
     private void showPopup() {
         Dialog popupDialog = new Dialog(this);
@@ -179,13 +209,19 @@ public class MainActivity extends AppCompatActivity implements ProductSearchTask
                 String imageUrl = uri.toString();
                 Date scanDate = new Date();
 
-                ScannedImage scannedImage = new ScannedImage(scanId, userId, imageUrl, scanDate);
+                Intent intent = getIntent();
+                boolean fromHistory = intent.getBooleanExtra("fromHistory", false);
 
-                db.collection("scannedImages")
-                        .document(scanId)
-                        .set(scannedImage)
-                        .addOnSuccessListener(aVoid -> Log.d("Firestore", "ScannedImage added successfully!"))
-                        .addOnFailureListener(e -> Log.e("Firestore", "Failed to add ScannedImage", e));
+                if (!fromHistory) {
+                    ScannedImage scannedImage = new ScannedImage(scanId, userId, imageUrl, scanDate);
+
+                    db.collection("scannedImages")
+                            .document(scanId)
+                            .set(scannedImage)
+                            .addOnSuccessListener(aVoid -> Log.d("Firestore", "ScannedImage added successfully!"))
+                            .addOnFailureListener(e -> Log.e("Firestore", "Failed to add ScannedImage", e));
+
+                }
 
                 ImageUploader imageUploader = new ImageUploader();
                 imageUploader.callVisionAPI(uri.toString(), new ImageUploader.CropCallback() {
