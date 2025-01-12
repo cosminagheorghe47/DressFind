@@ -116,6 +116,7 @@ public class MyOutfitsActivity extends AppCompatActivity {
                         outfits.clear();
                         for (QueryDocumentSnapshot document : task.getResult()) {
                             Outfit outfit = document.toObject(Outfit.class);
+                            outfit.setOutfitId(document.getId());
                             outfits.add(outfit);
                         }
                         outfitsAdapter.notifyDataSetChanged();
