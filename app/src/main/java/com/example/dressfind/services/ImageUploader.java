@@ -2,12 +2,14 @@ package com.example.dressfind.services;
 
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
+import android.graphics.Matrix;
 import android.os.AsyncTask;
 import android.util.Log;
 
 import com.google.firebase.storage.FirebaseStorage;
 import com.google.firebase.storage.StorageReference;
 import com.google.firebase.storage.UploadTask;
+import com.squareup.picasso.Picasso;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -29,7 +31,7 @@ public class ImageUploader {
     private static final String API_KEY = "AIzaSyCSS-WiCPU2UF6Znol71aIw-da6dlQfnz0";
     private static final String VISION_API_URL = "https://vision.googleapis.com/v1/images:annotate?key=" + API_KEY;
     static String imageUrl;
-
+    private static final String TAG = "ImageUploader";
     public interface CropCallback {
         void onCroppedImageUrl(String croppedImageUrl);
         void onError(Exception e);
@@ -188,4 +190,91 @@ public class ImageUploader {
             callback.onError(e);
         }
     }
+    public interface ResizeCallback {
+        void onResized(String resizedImageUrl);
+
+        default void onError(String error) {
+
+        }
+    }
+        public static void resizeImage(String imageUrl, int minDimension, int maxDimension, ResizeCallback callback) {
+            new android.os.Handler(android.os.Looper.getMainLooper()).post(() -> {
+                Picasso.get().load(imageUrl).into(new com.squareup.picasso.Target() {
+                    @Override
+                    public void onBitmapLoaded(Bitmap bitmap, Picasso.LoadedFrom from) {
+                        int width = bitmap.getWidth();
+                        int height = bitmap.getHeight();
+
+                        // Determine the scale factor to resize within the allowed range
+                        float scale = Math.min(Math.max((float) minDimension / Math.min(width, height), 1.0f),
+                                (float) maxDimension / Math.max(width, height));
+
+                        Matrix matrix = new Matrix();
+                        matrix.postScale(scale, scale);
+
+                        Bitmap resizedBitmap = Bitmap.createBitmap(bitmap, 0, 0, width, height, matrix, true);
+                        uploadToFirebase(resizedBitmap, callback);
+                    }
+
+                    @Override
+                    public void onBitmapFailed(Exception e, android.graphics.drawable.Drawable errorDrawable) {
+                        Log.e(TAG, "Failed to load image: " + e.getMessage());
+                        callback.onError("Failed to load image.");
+                    }
+
+                    @Override
+                    public void onPrepareLoad(android.graphics.drawable.Drawable placeHolderDrawable) {
+                        // Optional
+                    }
+                });
+            });
+        }
+
+    private static void uploadToFirebase(Bitmap bitmap, ResizeCallback callback) {
+        ByteArrayOutputStream baos = new ByteArrayOutputStream();
+        bitmap.compress(Bitmap.CompressFormat.JPEG, 100, baos);
+        byte[] imageData = baos.toByteArray();
+
+        StorageReference storageRef = FirebaseStorage.getInstance()
+                .getReference("resized_images/" + System.currentTimeMillis() + ".jpg");
+
+        storageRef.putBytes(imageData).addOnSuccessListener(taskSnapshot ->
+                storageRef.getDownloadUrl().addOnSuccessListener(uri -> {
+                    Log.d(TAG, "Resized image uploaded: " + uri.toString());
+                    callback.onResized(uri.toString());
+                }).addOnFailureListener(e -> {
+                    Log.e(TAG, "Failed to get download URL: " + e.getMessage());
+                    callback.onError("Failed to get download URL.");
+                })
+        ).addOnFailureListener(e -> {
+            Log.e(TAG, "Failed to upload resized image: " + e.getMessage());
+            callback.onError("Failed to upload resized image.");
+        });
+    }
+    public static void checkImageSize(String imageUrl, ImageSizeCallback callback, ResizeCallback errorCallback) {
+        Picasso.get().load(imageUrl).into(new com.squareup.picasso.Target() {
+            @Override
+            public void onBitmapLoaded(Bitmap bitmap, Picasso.LoadedFrom from) {
+                int width = bitmap.getWidth();
+                int height = bitmap.getHeight();
+                callback.onSizeRetrieved(width, height);
+            }
+
+            @Override
+            public void onBitmapFailed(Exception e, android.graphics.drawable.Drawable errorDrawable) {
+                Log.e(TAG, "Failed to load image for size check: " + e.getMessage());
+                errorCallback.onError("Failed to load image for size check.");
+            }
+
+            @Override
+            public void onPrepareLoad(android.graphics.drawable.Drawable placeHolderDrawable) {
+                // Optional
+            }
+        });
+    }
+
+    public interface ImageSizeCallback {
+        void onSizeRetrieved(int width, int height);
+    }
+
 }

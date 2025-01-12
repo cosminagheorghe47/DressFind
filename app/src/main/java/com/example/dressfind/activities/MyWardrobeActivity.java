@@ -5,22 +5,32 @@ import androidx.recyclerview.widget.GridLayoutManager;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
+import android.content.ActivityNotFoundException;
 import android.content.Intent;
+import android.net.Uri;
 import android.os.Bundle;
 import android.util.Log;
 import android.widget.Button;
 import android.widget.GridView;
 import android.widget.Toast;
-
+import androidx.annotation.RequiresApi;
+import com.google.firebase.storage.FirebaseStorage;
+import com.google.firebase.storage.StorageReference;
+import com.example.dressfind.models.CreatePinResponse;
+import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Paths;
+import android.content.ActivityNotFoundException;
 import com.example.dressfind.R;
 import com.example.dressfind.models.WardrobeItem;
 import com.example.dressfind.recyclerviews.CategoryAdapter;
 import com.example.dressfind.recyclerviews.WardrobeItemAdapter;
+import com.example.dressfind.services.PinterestService;
 import com.google.android.material.bottomnavigation.BottomNavigationView;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.QueryDocumentSnapshot;
-
+import java.util.Base64;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -33,14 +43,13 @@ public class MyWardrobeActivity extends AppCompatActivity {
     private CategoryAdapter categoryAdapter;
     private WardrobeItemAdapter wardrobeItemAdapter;
 
-    private Button button_generate_outfit;
 
     private final List<String> categories = Arrays.asList("T-Shirts", "Shirts", "Pullovers", "Pants", "Dresses", "Coats", "Sneakers", "Sandals", "Boots", "Bags");
     private final List<WardrobeItem> wardrobeItems = new ArrayList<>();
-
+    private static final String TAG = "PinterestAPI";
+    private Button button_generate_outfit;
     private FirebaseFirestore db;
     private FirebaseAuth auth;
-
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -56,15 +65,64 @@ public class MyWardrobeActivity extends AppCompatActivity {
 
         recyclerViewClothes = findViewById(R.id.recyclerView_clothes);
         recyclerViewClothes.setLayoutManager(new GridLayoutManager(this, 2));
-        wardrobeItemAdapter = new WardrobeItemAdapter(this, wardrobeItems);
+        wardrobeItemAdapter = new WardrobeItemAdapter(this, wardrobeItems, new WardrobeItemAdapter.OnCreatePinClickListener() {
+            @Override
+            public void onCreatePinClick(WardrobeItem item, String description) {
+//                fetchPublicImageUrl(item.getImage(), new FirebaseUrlCallback() {
+//                    @Override
+//                    public void onSuccess(String publicUrl) {
+                Log.e(TAG, "PUBLIC URL : " + item.getImage());
+                PinterestService pinterestService = new PinterestService(MyWardrobeActivity.this);
+
+                pinterestService.createPin(
+                        "967359263650636536",
+                        item.getImage(),
+                        item.getName(),
+                        description,
+                        new PinterestService.CreatePinCallback() {
+                            @Override
+                            public void onSuccess(CreatePinResponse createPinResponse) {
+                                Log.d(TAG, "Pin created successfully: " + createPinResponse);
+                                String boardUrl = "https://ro.pinterest.com/DressFindAccount/dressfindpins/";
+
+                                Intent intent = new Intent(Intent.ACTION_VIEW, Uri.parse(boardUrl));
+                                intent.setPackage("com.pinterest");
+                                try {
+                                    startActivity(intent);
+                                } catch (ActivityNotFoundException e) {
+                                    // Pinterest app is not installed, fall back to the web browser
+                                    String fallbackUrl = "https://www.pinterest.com/DressFindAccount/dressfindpins/";
+                                    Intent fallbackIntent = new Intent(Intent.ACTION_VIEW, Uri.parse(fallbackUrl));
+                                    startActivity(fallbackIntent);
+                                }
+                            }
+
+                            @Override
+                            public void onError(String error) {
+                                Log.e(TAG, "Failed to create pin: " + error);
+                            }
+                        }
+                );
+//                    }
+
+//                    @Override
+//                    public void onError(Exception e) {
+//                        Log.e(TAG, "Failed to fetch public URL: " + e.getMessage());
+//                        Toast.makeText(MyWardrobeActivity.this, "Failed to fetch public URL", Toast.LENGTH_SHORT).show();
+//                    }
+//                });
+            }
+        });
         recyclerViewClothes.setAdapter(wardrobeItemAdapter);
 
         button_generate_outfit = findViewById(R.id.button_generate_outfit);
+
 
         button_generate_outfit.setOnClickListener(v -> {
             Intent intent = new Intent(MyWardrobeActivity.this, GenerateOutfitActivity.class);
             startActivity(intent);
         });
+
 
         loadCategories();
 

@@ -36,6 +36,8 @@ public class Outfit implements Parcelable {
         Name = in.readString();
         Description = in.readString();
         Image = in.readString();
+        long scheduledDateMillis = in.readLong();
+        ScheduledDate = scheduledDateMillis == -1 ? null : new Date(scheduledDateMillis);
     }
 
     public static final Creator<Outfit> CREATOR = new Creator<Outfit>() {
@@ -118,6 +120,7 @@ public class Outfit implements Parcelable {
         dest.writeString(Name);
         dest.writeString(Description);
         dest.writeString(Image);
+        dest.writeLong(ScheduledDate != null ? ScheduledDate.getTime() : -1);
     }
 
     @Override
