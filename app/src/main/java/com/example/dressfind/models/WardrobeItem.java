@@ -1,6 +1,9 @@
 package com.example.dressfind.models;
 
-public class WardrobeItem {
+import android.os.Parcel;
+import android.os.Parcelable;
+
+public class WardrobeItem implements Parcelable {
 
     private String itemId;
     private String color;
@@ -26,6 +29,48 @@ public class WardrobeItem {
         this.userId = userId;
         this.Category = Category;
     }
+
+    protected WardrobeItem(Parcel in) {
+        itemId = in.readString();
+        color = in.readString();
+        description = in.readString();
+        image = in.readString();
+        material = in.readString();
+        name = in.readString();
+        scanId = in.readString();
+        userId = in.readString();
+        Category = in.readString();
+    }
+
+    @Override
+    public void writeToParcel(Parcel dest, int flags) {
+        dest.writeString(itemId);
+        dest.writeString(color);
+        dest.writeString(description);
+        dest.writeString(image);
+        dest.writeString(material);
+        dest.writeString(name);
+        dest.writeString(scanId);
+        dest.writeString(userId);
+        dest.writeString(Category);
+    }
+
+    @Override
+    public int describeContents() {
+        return 0;
+    }
+
+    public static final Creator<WardrobeItem> CREATOR = new Creator<WardrobeItem>() {
+        @Override
+        public WardrobeItem createFromParcel(Parcel in) {
+            return new WardrobeItem(in);
+        }
+
+        @Override
+        public WardrobeItem[] newArray(int size) {
+            return new WardrobeItem[size];
+        }
+    };
 
     public String getItemId() {
         return itemId;

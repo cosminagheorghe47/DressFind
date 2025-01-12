@@ -19,7 +19,7 @@ public class ClothingItem {
     public ClothingItem() {
     }
 
-    public ClothingItem(String itemId, String userId, String scanId, String name, String description, String image, String material, String color, Double price, String storeId, String Category) {
+    public ClothingItem(String itemId, String userId, String scanId, String name, String description, String image, String material, String color, Double price, String storeId, String category) {
         ItemId = itemId;
         UserId = userId;
         ScanId = scanId;
@@ -30,7 +30,7 @@ public class ClothingItem {
         Color = color;
         Price = price;
         StoreId = storeId;
-        Category = Category;
+        Category = category;
 
     }
 

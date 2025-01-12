@@ -17,6 +17,7 @@ import com.example.dressfind.models.WardrobeItem;
 import com.example.dressfind.recyclerviews.CategoryAdapter;
 import com.example.dressfind.recyclerviews.WardrobeItemAdapter;
 import com.google.android.material.bottomnavigation.BottomNavigationView;
+import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.QueryDocumentSnapshot;
 
@@ -32,10 +33,13 @@ public class MyWardrobeActivity extends AppCompatActivity {
     private CategoryAdapter categoryAdapter;
     private WardrobeItemAdapter wardrobeItemAdapter;
 
+    private Button button_generate_outfit;
+
     private final List<String> categories = Arrays.asList("T-Shirts", "Shirts", "Pullovers", "Pants", "Dresses", "Coats", "Sneakers", "Sandals", "Boots", "Bags");
     private final List<WardrobeItem> wardrobeItems = new ArrayList<>();
 
     private FirebaseFirestore db;
+    private FirebaseAuth auth;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -43,6 +47,7 @@ public class MyWardrobeActivity extends AppCompatActivity {
         setContentView(R.layout.activity_my_wardrobe);
 
         db = FirebaseFirestore.getInstance();
+        auth = FirebaseAuth.getInstance();
 
         recyclerViewCategories = findViewById(R.id.recyclerView_categories);
         recyclerViewCategories.setLayoutManager(new LinearLayoutManager(this, LinearLayoutManager.HORIZONTAL, false));
@@ -54,12 +59,14 @@ public class MyWardrobeActivity extends AppCompatActivity {
         wardrobeItemAdapter = new WardrobeItemAdapter(this, wardrobeItems);
         recyclerViewClothes.setAdapter(wardrobeItemAdapter);
 
+        button_generate_outfit = findViewById(R.id.button_generate_outfit);
+
+        button_generate_outfit.setOnClickListener(v -> {
+            Intent intent = new Intent(MyWardrobeActivity.this, GenerateOutfitActivity.class);
+            startActivity(intent);
+        });
+
         loadCategories();
-
-
-
-
-
 
 
         bottomNavigationView = findViewById(R.id.includeNavBar);
@@ -80,27 +87,15 @@ public class MyWardrobeActivity extends AppCompatActivity {
                 overridePendingTransition(0, 0);
                 return true;
             } else if (item.getItemId() == R.id.nav_outfits) {
-//                Intent scanIntent = new Intent(MyWardrobeActivity.this, MainActivity.class);
-//                startActivity(scanIntent);
-//                overridePendingTransition(0, 0);
+                Intent scanIntent = new Intent(MyWardrobeActivity.this, MyOutfitsActivity.class);
+                startActivity(scanIntent);
+                overridePendingTransition(0, 0);
                 return true;
             } else return item.getItemId() == R.id.nav_profile;
         });
     }
 
     private void loadCategories() {
-
-//        categories.add("T-Shirts");
-//        categories.add("Shirts");
-//        categories.add("Pullovers");
-//        categories.add("Pants");
-//        categories.add("Dresses");
-//        categories.add("Coats");
-//        categories.add("Sneakers");
-//        categories.add("Sandals");
-//        categories.add("Boots");
-//        categories.add("Bags");
-
         categoryAdapter.notifyDataSetChanged();
 
         recyclerViewCategories.post(() -> {
@@ -114,10 +109,18 @@ public class MyWardrobeActivity extends AppCompatActivity {
         }
 
     }
-
+    //TODO: fetch by currentUser
     private void fetchWardrobeItemsByCategory(String category) {
+        String currentUserId = auth.getCurrentUser() != null ? auth.getCurrentUser().getUid() : null;
+
+        if (currentUserId == null) {
+            Toast.makeText(this, "User not authenticated", Toast.LENGTH_SHORT).show();
+            return;
+        }
+
         db.collection("wardrobeItem")
                 .whereEqualTo("Category", category)
+                //.whereEqualTo("userId", currentUserId)
                 .get()
                 .addOnCompleteListener(task -> {
                     if (task.isSuccessful()) {

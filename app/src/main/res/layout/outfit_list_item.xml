@@ -8,18 +8,18 @@
     android:layout_margin="10dp">
 
     <ImageView
-        android:id="@+id/itemImage"
+        android:id="@+id/outfitImage"
         android:layout_width="150dp"
         android:layout_height="150dp"
         android:scaleType="centerCrop"
         />
 
     <TextView
-        android:id="@+id/itemName"
+        android:id="@+id/outfitName"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:gravity="center"
-        android:text="Item Name"
+        android:text="Outfit Name"
         android:textColor="@android:color/black"
         android:paddingTop="4dp" />
 </LinearLayout>
