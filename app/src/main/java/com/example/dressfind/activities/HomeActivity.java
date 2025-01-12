@@ -27,6 +27,7 @@ public class HomeActivity extends AppCompatActivity {
     private static final int PINTEREST_AUTH_REQUEST_CODE = 123;
     CardView ScanProductCard;
     CardView ConnectPinterest;
+    CardView SearchedProducts;
     private ActivityResultLauncher<Intent> pinterestAuthLauncher;
 
     TextView seePinterestAccTV ;
@@ -87,19 +88,16 @@ public class HomeActivity extends AppCompatActivity {
                 startActivity(scanIntent);
                 overridePendingTransition(0, 0);
                 return true;
-            } else return item.getItemId() == R.id.nav_profile;
+            }else if (item.getItemId() == R.id.nav_profile) {
+                Intent profileIntent = new Intent(HomeActivity.this, ProfileActivity.class);
+                startActivity(profileIntent);
+                return true;
+            }else return true;
         });
 
 
 
-        scannedProductsCard=findViewById(R.id.scannedProductsCard);
-        scannedProductsCard.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                Intent scanIntent = new Intent(HomeActivity.this, ScannedProductsActivity.class);
-                startActivity(scanIntent);
-            }
-        });
+
 
         MyWardrobeCard=findViewById(R.id.myWardrobeCard);
         MyWardrobeCard.setOnClickListener(new View.OnClickListener() {
@@ -118,6 +116,15 @@ public class HomeActivity extends AppCompatActivity {
                 startActivity(scanIntent);
             }
         });
+        SearchedProducts = findViewById(R.id.scannedProductsCard);
+        SearchedProducts.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                Intent searchIntent = new Intent(HomeActivity.this, HistoryActivity.class);
+                startActivity(searchIntent);
+            }
+        });
+
         ConnectPinterest = findViewById(R.id.connectToPinterestCard);
         ConnectPinterest.setOnClickListener(new View.OnClickListener() {
             @Override

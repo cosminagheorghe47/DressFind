@@ -9,24 +9,30 @@ import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import android.Manifest;
+import android.app.Dialog;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.graphics.Bitmap;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
+import android.view.Window;
+import android.view.WindowManager;
+import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.Toast;
 
 import com.example.dressfind.R;
 import com.example.dressfind.adapters.MatchingImageAdapter;
 import com.example.dressfind.models.MatchingImage;
+import com.example.dressfind.models.ScannedImage;
 import com.example.dressfind.services.AppContext;
 import com.example.dressfind.services.CameraService;
 import com.example.dressfind.services.ImageAnalyzer;
 import com.example.dressfind.services.ImageUploader;
 import com.example.dressfind.services.ProductSearchTask;
 import com.google.firebase.FirebaseApp;
+import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.storage.FirebaseStorage;
 import com.google.firebase.storage.StorageReference;
@@ -48,7 +54,7 @@ public class MainActivity extends AppCompatActivity implements ProductSearchTask
     private MatchingImageAdapter matchingImageAdapter;
     private List<MatchingImage> matchingImages = new ArrayList<>();
     private ProductSearchTask productSearchTask;
-
+    private FirebaseAuth auth;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -58,12 +64,11 @@ public class MainActivity extends AppCompatActivity implements ProductSearchTask
         cameraService = new CameraService(this);
         storageReference = FirebaseStorage.getInstance().getReference();
         db = FirebaseFirestore.getInstance();
-        ImageView homeIcon = findViewById(R.id.home_icon);
-        ImageView cameraIcon = findViewById(R.id.camera_icon);
-        ImageView collectionIcon = findViewById(R.id.collection_icon);
         capturedImage = findViewById(R.id.captured_image);
 
         AppContext.setContext(this);
+
+        auth = FirebaseAuth.getInstance();
 
         recyclerView = findViewById(R.id.recycler_view);
 
@@ -75,56 +80,53 @@ public class MainActivity extends AppCompatActivity implements ProductSearchTask
 
         productSearchTask = new ProductSearchTask();
         productSearchTask.setCallback(this);
-        homeIcon.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                Toast.makeText(MainActivity.this, "Left", Toast.LENGTH_SHORT).show();
-            }
-        });
-
-        cameraIcon.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                if (ContextCompat.checkSelfPermission(MainActivity.this, Manifest.permission.CAMERA)
-                        == PackageManager.PERMISSION_GRANTED) {
-                    cameraService.openCamera(cameraLauncher);
-                } else {
-                    ActivityCompat.requestPermissions(MainActivity.this,
-                            new String[]{Manifest.permission.CAMERA}, 100);
-                }
-            }
-        });
-
-        collectionIcon.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                Toast.makeText(MainActivity.this, "Right", Toast.LENGTH_SHORT).show();
-            }
-        });
 
 
 
-        //TEST ADAUGARE WARDROBE ITEM IN DB  --> A MERS
-//        WardrobeItem item = new WardrobeItem(
-//                "12345",
-//                "Red",
-//                "A red shirt",
-//                "https://example.com/image.jpg",
-//                "Cotton",
-//                "Shirt",
-//                "scan123",
-//                "user123"
-//        );
+        showPopup();
     }
+    private void showPopup() {
+        Dialog popupDialog = new Dialog(this);
+        popupDialog.requestWindowFeature(Window.FEATURE_NO_TITLE);
+        popupDialog.setContentView(R.layout.popup_layout);
+        popupDialog.setCancelable(true);
+
+        Window window = popupDialog.getWindow();
+        if (window != null) {
+            WindowManager.LayoutParams layoutParams = window.getAttributes();
+            layoutParams.width = WindowManager.LayoutParams.MATCH_PARENT;
+            window.setAttributes(layoutParams);
+        }
+
+        Button btnSearchGoogle = popupDialog.findViewById(R.id.btn_search_google);
+        Button btnAddWardrobe = popupDialog.findViewById(R.id.btn_add_wardrobe);
+
+        btnSearchGoogle.setOnClickListener(v -> {
+            if (ContextCompat.checkSelfPermission(MainActivity.this, Manifest.permission.CAMERA)
+                    == PackageManager.PERMISSION_GRANTED) {
+                cameraService.openCamera(cameraLauncher);
+            } else {
+                ActivityCompat.requestPermissions(MainActivity.this,
+                        new String[]{Manifest.permission.CAMERA}, 100);
+            }
+            popupDialog.dismiss();
+        });
+
+        btnAddWardrobe.setOnClickListener(v -> {
+            Toast.makeText(MainActivity.this, "Add to Wardrobe action", Toast.LENGTH_SHORT).show();
+            popupDialog.dismiss();
+        });
+
+        popupDialog.show();
+    }
+
     private final ActivityResultLauncher<Intent> cameraLauncher =
             registerForActivityResult(new ActivityResultContracts.StartActivityForResult(), result -> {
                 if (result.getResultCode() == RESULT_OK && result.getData() != null) {
                     Bitmap photo = (Bitmap) result.getData().getExtras().get("data");
 
                     if (photo != null) {
-                        //Trebuie sa facem upgrade plan pe firebase pentru storage, poate salvam pozele altundeva (imgur?)
                         uploadToFirebase(photo);
-
                         capturedImage.setImageBitmap(photo);
                     } else {
                         Toast.makeText(this, "Failed to capture image.", Toast.LENGTH_SHORT).show();
@@ -133,6 +135,7 @@ public class MainActivity extends AppCompatActivity implements ProductSearchTask
                     Toast.makeText(this, "Operation canceled.", Toast.LENGTH_SHORT).show();
                 }
             });
+
 
     @Override
     public void onMatchingImagesFound(List<MatchingImage> matchingImages) {
@@ -171,6 +174,19 @@ public class MainActivity extends AppCompatActivity implements ProductSearchTask
                 Log.d("FirebaseStorage", "Image uploaded: " + uri.toString());
                 Toast.makeText(this, "Image uploaded successfully!", Toast.LENGTH_SHORT).show();
 
+                String scanId = db.collection("scannedImages").document().getId();
+                String userId = FirebaseAuth.getInstance().getCurrentUser().getUid();
+                String imageUrl = uri.toString();
+                Date scanDate = new Date();
+
+                ScannedImage scannedImage = new ScannedImage(scanId, userId, imageUrl, scanDate);
+
+                db.collection("scannedImages")
+                        .document(scanId)
+                        .set(scannedImage)
+                        .addOnSuccessListener(aVoid -> Log.d("Firestore", "ScannedImage added successfully!"))
+                        .addOnFailureListener(e -> Log.e("Firestore", "Failed to add ScannedImage", e));
+
                 ImageUploader imageUploader = new ImageUploader();
                 imageUploader.callVisionAPI(uri.toString(), new ImageUploader.CropCallback() {
                     @Override
@@ -197,6 +213,6 @@ public class MainActivity extends AppCompatActivity implements ProductSearchTask
             Log.e("FirebaseStorage", "Image upload failed", e);
             Toast.makeText(this, "Image upload failed!", Toast.LENGTH_SHORT).show();
         });
-
     }
+
 }
