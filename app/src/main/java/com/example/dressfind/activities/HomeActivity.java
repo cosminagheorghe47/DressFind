@@ -28,6 +28,7 @@ public class HomeActivity extends AppCompatActivity {
     CardView ScanProductCard;
     CardView ConnectPinterest;
     CardView SearchedProducts;
+    CardView ExploreOutfits;
     private ActivityResultLauncher<Intent> pinterestAuthLauncher;
     private static final String TAG = "PinterestAPI";
 
@@ -125,6 +126,14 @@ public class HomeActivity extends AppCompatActivity {
             @Override
             public void onClick(View view) {
                 Intent searchIntent = new Intent(HomeActivity.this, HistoryActivity.class);
+                startActivity(searchIntent);
+            }
+        });
+        ExploreOutfits = findViewById(R.id.exploreOutfits);
+        ExploreOutfits.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                Intent searchIntent = new Intent(HomeActivity.this, ExploreActivity.class);
                 startActivity(searchIntent);
             }
         });

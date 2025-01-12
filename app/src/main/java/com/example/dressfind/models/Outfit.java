@@ -16,11 +16,12 @@ public class Outfit implements Parcelable {
     private String Description;
     private Date ScheduledDate;
     private String Image;
+    private boolean IsPublic;
 
     public Outfit() {
     }
 
-    public Outfit(String outfitId, String userId, String name, Date creationDate, String description, Date scheduledDate, String image) {
+    public Outfit(String outfitId, String userId, String name, Date creationDate, String description, Date scheduledDate, String image, boolean isPublic) {
         OutfitId = outfitId;
         UserId = userId;
         Name = name;
@@ -28,6 +29,7 @@ public class Outfit implements Parcelable {
         Description = description;
         ScheduledDate = scheduledDate;
         Image = image;
+        IsPublic = isPublic;
     }
 
     protected Outfit(Parcel in) {
@@ -108,6 +110,14 @@ public class Outfit implements Parcelable {
         ScheduledDate = scheduledDate;
     }
 
+    public boolean isPublic() {
+        return IsPublic;
+    }
+
+    public void setPublic(boolean aPublic) {
+        IsPublic = aPublic;
+    }
+
     @Override
     public int describeContents() {
         return 0;
@@ -133,6 +143,7 @@ public class Outfit implements Parcelable {
                 ", Description='" + Description + '\'' +
                 ", ScheduledDate=" + ScheduledDate +
                 ", Image='" + Image + '\'' +
+                ", isPublic=" + IsPublic +
                 '}';
     }
 }

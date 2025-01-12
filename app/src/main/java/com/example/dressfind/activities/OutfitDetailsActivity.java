@@ -24,6 +24,7 @@ import com.example.dressfind.models.OutfitsItems;
 import com.example.dressfind.models.WardrobeItem;
 import com.example.dressfind.recyclerviews.WardrobeItemAdapter;
 import com.example.dressfind.services.PinterestService;
+import com.google.android.material.bottomnavigation.BottomNavigationView;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.QueryDocumentSnapshot;
 
@@ -37,7 +38,6 @@ import java.util.Locale;
 public class OutfitDetailsActivity extends AppCompatActivity {
 
     private FirebaseFirestore db;
-
     private WardrobeItemAdapter wardrobeItemAdapter;
     private Button scheduleOutfitButton;
     private RecyclerView recyclerViewWardrobeItems;
@@ -46,6 +46,9 @@ public class OutfitDetailsActivity extends AppCompatActivity {
     private Outfit currentOutfit;
     private TextView titlePage;
     private String outfitId;
+    private Button publishButton;  
+    BottomNavigationView bottomNavigationView ;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -112,6 +115,8 @@ public class OutfitDetailsActivity extends AppCompatActivity {
 
         outfitId = getIntent().getStringExtra("outfitId");
 
+     
+
         if (outfitId == null || outfitId.isEmpty()) {
             Toast.makeText(this, "Outfit ID is missing", Toast.LENGTH_SHORT).show();
             finish();
@@ -119,6 +124,42 @@ public class OutfitDetailsActivity extends AppCompatActivity {
         }
 
         titlePage = findViewById(R.id.titlePage);
+         
+        publishButton = findViewById(R.id.button_publish_outfit);  // Find the button by ID
+
+        setPublishButtonText(outfit);
+
+        bottomNavigationView = findViewById(R.id.includeNavBar);
+        bottomNavigationView.setSelectedItemId(R.id.nav_outfits);
+
+        bottomNavigationView.setOnItemSelectedListener(item -> {
+            if (item.getItemId() == R.id.nav_outfits) {
+                return true;
+            } else if (item.getItemId() == R.id.nav_scan) {
+                Intent scanIntent = new Intent(OutfitDetailsActivity.this, MainActivity.class);
+                startActivity(scanIntent);
+                overridePendingTransition(0, 0);
+                return true;
+            } else if (item.getItemId() == R.id.nav_home) {
+                Intent scanIntent = new Intent(OutfitDetailsActivity.this, HomeActivity.class);
+                startActivity(scanIntent);
+                overridePendingTransition(0, 0);
+                return true;
+            } else if (item.getItemId() == R.id.nav_wardrobe) {
+                Intent scanIntent = new Intent(OutfitDetailsActivity.this, MyWardrobeActivity.class);
+                startActivity(scanIntent);
+                overridePendingTransition(0, 0);
+                return true;
+            } else if (item.getItemId() == R.id.nav_profile) {
+                Intent profileIntent = new Intent(OutfitDetailsActivity.this, ProfileActivity.class);
+                startActivity(profileIntent);
+                return true;
+            } else return true;
+        });
+       publishButton.setOnClickListener(v -> {
+                  togglePublishStatus(outfit);
+              });
+          }
     }
     @Override
     protected void onResume() {
@@ -131,7 +172,6 @@ public class OutfitDetailsActivity extends AppCompatActivity {
             finish();
             return;
         }
-
         db.collection("outfits").document(outfitId)
                 .get()
                 .addOnSuccessListener(documentSnapshot -> {
@@ -167,6 +207,34 @@ public class OutfitDetailsActivity extends AppCompatActivity {
         } else {
             scheduleOutfitButton.setText("Schedule Outfit");
         }
+    }
+
+       
+
+    private void setPublishButtonText(Outfit outfit) {
+        Log.i("current OUTFIT: ", String.valueOf(outfit));
+        if (outfit.isPublic()) {
+            publishButton.setText("Delete Publish");
+        } else {
+            publishButton.setText("Publish Outfit");
+        }
+    }
+
+    private void togglePublishStatus(Outfit outfit) {
+        boolean newPublishStatus = !outfit.isPublic();
+        outfit.setPublic(newPublishStatus);
+
+        setPublishButtonText(outfit);
+
+        db.collection("outfits")
+                .document(outfit.getOutfitId())
+                .update("isPublic", newPublishStatus)
+                .addOnSuccessListener(aVoid -> {
+                    Toast.makeText(OutfitDetailsActivity.this, "Outfit publish status updated", Toast.LENGTH_SHORT).show();
+                })
+                .addOnFailureListener(e -> {
+                    Toast.makeText(OutfitDetailsActivity.this, "Failed to update publish status", Toast.LENGTH_SHORT).show();
+                });
     }
 
     public void getItemIdsForOutfit(String outfitId) {
@@ -272,3 +340,9 @@ public class OutfitDetailsActivity extends AppCompatActivity {
 }
 
 
+    @Override
+    protected void onResume() {
+        super.onResume();
+        bottomNavigationView.setSelectedItemId(R.id.nav_outfits);
+    }
+}
