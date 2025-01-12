@@ -1,6 +1,7 @@
 package com.example.dressfind.adapters;
 
 import android.content.Context;
+import android.content.Intent;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -10,6 +11,7 @@ import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.example.dressfind.R;
+import com.example.dressfind.activities.MainActivity;
 import com.example.dressfind.models.ScannedImage;
 import com.squareup.picasso.Picasso;
 
@@ -44,6 +46,13 @@ public class HistoryAdapter extends RecyclerView.Adapter<HistoryAdapter.ViewHold
         Picasso.get()
                 .load(scannedImage.getImage())
                 .into(holder.imageViewScanned);
+
+        holder.itemView.setOnClickListener(v -> {
+            Intent intent = new Intent(context, MainActivity.class);
+            intent.putExtra("imageUrl", scannedImage.getImage());
+            intent.putExtra("fromHistory", true);
+            context.startActivity(intent);
+        });
     }
 
     @Override
