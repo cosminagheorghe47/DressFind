@@ -1,7 +1,9 @@
 package com.example.dressfind.models;
 
+import android.os.Build;
 import android.os.Parcel;
 import android.os.Parcelable;
+import com.google.firebase.firestore.PropertyName;
 
 import androidx.annotation.NonNull;
 
@@ -17,10 +19,13 @@ public class Outfit implements Parcelable {
     private Date ScheduledDate;
     private String Image;
 
+    @PropertyName("isPublic")
+    private boolean IsPublic;
+
     public Outfit() {
     }
 
-    public Outfit(String outfitId, String userId, String name, Date creationDate, String description, Date scheduledDate, String image) {
+    public Outfit(String outfitId, String userId, String name, Date creationDate, String description, Date scheduledDate, String image, boolean isPublic) {
         OutfitId = outfitId;
         UserId = userId;
         Name = name;
@@ -28,6 +33,7 @@ public class Outfit implements Parcelable {
         Description = description;
         ScheduledDate = scheduledDate;
         Image = image;
+        IsPublic = isPublic;
     }
 
     protected Outfit(Parcel in) {
@@ -106,6 +112,16 @@ public class Outfit implements Parcelable {
         ScheduledDate = scheduledDate;
     }
 
+    @PropertyName("isPublic")
+    public boolean isPublic() {
+        return IsPublic;
+    }
+
+    @PropertyName("isPublic")
+    public void setPublic(boolean aPublic) {
+        IsPublic = aPublic;
+    }
+
     @Override
     public int describeContents() {
         return 0;
@@ -118,6 +134,9 @@ public class Outfit implements Parcelable {
         dest.writeString(Name);
         dest.writeString(Description);
         dest.writeString(Image);
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
+            dest.writeBoolean(IsPublic);
+        }
     }
 
     @Override
@@ -130,6 +149,7 @@ public class Outfit implements Parcelable {
                 ", Description='" + Description + '\'' +
                 ", ScheduledDate=" + ScheduledDate +
                 ", Image='" + Image + '\'' +
+                ", isPublic=" + IsPublic +
                 '}';
     }
 }
