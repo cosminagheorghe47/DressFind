@@ -9,7 +9,6 @@ public class User {
     private String LastName;
     private Date RegistrationDate;
     private String Email;
-    private String imageUrl;
 
     public User() {
     }
@@ -20,7 +19,6 @@ public class User {
         LastName = lastName;
         RegistrationDate = registrationDate;
         Email = email;
-        this.imageUrl = imageUrl;  // Initialize the image URL field
     }
 
     public String getUserId() {
@@ -63,13 +61,8 @@ public class User {
         Email = email;
     }
 
-    public String getImageUrl() {
-        return imageUrl;
-    }
 
-    public void setImageUrl(String imageUrl) {
-        this.imageUrl = imageUrl;
-    }
+
 
     @Override
     public String toString() {
@@ -79,7 +72,6 @@ public class User {
                 ", LastName='" + LastName + '\'' +
                 ", RegistrationDate=" + RegistrationDate +
                 ", Email='" + Email + '\'' +
-                ", imageUrl='" + imageUrl + '\'' +
                 '}';
     }
 }

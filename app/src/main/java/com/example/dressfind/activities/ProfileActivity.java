@@ -7,6 +7,7 @@ import android.net.Uri;
 import android.view.View;
 import android.widget.Button;
 import android.widget.ImageView;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import com.example.dressfind.R;
@@ -14,19 +15,26 @@ import com.example.dressfind.models.User;
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.storage.FirebaseStorage;
 import com.google.firebase.storage.StorageReference;
 import com.google.firebase.storage.UploadTask;
 
-import java.util.UUID;
-
 import com.squareup.picasso.Picasso;
+
+import java.text.SimpleDateFormat;
+import java.util.Locale;
 
 public class ProfileActivity extends AppCompatActivity {
 
     private ImageView imageViewProfile;
     private Button buttonSelectImage;
+    private TextView textViewFirstName;
+    private TextView textViewLastName;
+    private TextView textViewEmail;
+    private TextView textViewRegistrationDate;
+
     private FirebaseStorage storage;
     private StorageReference storageReference;
     private FirebaseFirestore db;
@@ -40,6 +48,10 @@ public class ProfileActivity extends AppCompatActivity {
 
         imageViewProfile = findViewById(R.id.image_view_profile);
         buttonSelectImage = findViewById(R.id.button_select_image);
+        textViewFirstName = findViewById(R.id.text_view_first_name);
+        textViewLastName = findViewById(R.id.text_view_last_name);
+        textViewEmail = findViewById(R.id.text_view_email);
+        textViewRegistrationDate = findViewById(R.id.text_view_registration_date);
 
         storage = FirebaseStorage.getInstance();
         storageReference = storage.getReference();
@@ -47,6 +59,7 @@ public class ProfileActivity extends AppCompatActivity {
         auth = FirebaseAuth.getInstance();
 
         checkForExistingProfileImage();
+        fetchUserProfileData();
 
         buttonSelectImage.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -73,6 +86,40 @@ public class ProfileActivity extends AppCompatActivity {
         });
     }
 
+    private void fetchUserProfileData() {
+        String userId = auth.getCurrentUser().getUid();
+
+        db.collection("user").document(userId)
+                .get()
+                .addOnSuccessListener(new OnSuccessListener<DocumentSnapshot>() {
+                    @Override
+                    public void onSuccess(DocumentSnapshot documentSnapshot) {
+                        if (documentSnapshot.exists()) {
+                            User user = documentSnapshot.toObject(User.class);
+                            if (user != null) {
+                                textViewFirstName.setText("First Name: " + user.getFirstName());
+                                textViewLastName.setText("Last Name: " + user.getLastName());
+                                textViewEmail.setText("Email: " + user.getEmail());
+
+                                SimpleDateFormat dateFormat = new SimpleDateFormat("MM/dd/yyyy", Locale.getDefault());
+                                String formattedDate = dateFormat.format(user.getRegistrationDate());
+                                textViewRegistrationDate.setText("Registration Date: " + formattedDate);
+                            } else {
+                                Toast.makeText(ProfileActivity.this, "Error fetching user data", Toast.LENGTH_SHORT).show();
+                            }
+                        } else {
+                            Toast.makeText(ProfileActivity.this, "No profile found", Toast.LENGTH_SHORT).show();
+                        }
+                    }
+                })
+                .addOnFailureListener(new OnFailureListener() {
+                    @Override
+                    public void onFailure(Exception e) {
+                        Toast.makeText(ProfileActivity.this, "Failed to fetch profile data: " + e.getMessage(), Toast.LENGTH_SHORT).show();
+                    }
+                });
+    }
+
     private void openGallery() {
         Intent galleryIntent = new Intent(Intent.ACTION_PICK, android.provider.MediaStore.Images.Media.EXTERNAL_CONTENT_URI);
         startActivityForResult(galleryIntent, 1);
@@ -84,11 +131,9 @@ public class ProfileActivity extends AppCompatActivity {
         if (requestCode == 1 && resultCode == RESULT_OK && data != null) {
             imageUri = data.getData();
             Picasso.get().load(imageUri).into(imageViewProfile);
-
             uploadImage();
         }
     }
-
 
     private void uploadImage() {
         if (imageUri != null) {
@@ -102,7 +147,7 @@ public class ProfileActivity extends AppCompatActivity {
                                 @Override
                                 public void onSuccess(Uri uri) {
                                     String imageUrl = uri.toString();
-                                    updateUserProfileWithImageUrl(imageUrl);
+                                    // updateUserProfileWithImageUrl(imageUrl);
                                 }
                             });
                         }
@@ -116,24 +161,5 @@ public class ProfileActivity extends AppCompatActivity {
         } else {
             Toast.makeText(this, "Please select an image first", Toast.LENGTH_SHORT).show();
         }
-    }
-
-    private void updateUserProfileWithImageUrl(String imageUrl) {
-        String userId = auth.getCurrentUser().getUid();
-
-        db.collection("users").document(userId)
-                .update("profileImage", imageUrl)
-                .addOnSuccessListener(new OnSuccessListener<Void>() {
-                    @Override
-                    public void onSuccess(Void aVoid) {
-                        Toast.makeText(ProfileActivity.this, "Profile updated successfully!", Toast.LENGTH_SHORT).show();
-                    }
-                })
-                .addOnFailureListener(new OnFailureListener() {
-                    @Override
-                    public void onFailure(Exception e) {
-                        Toast.makeText(ProfileActivity.this, "Error updating profile: " + e.getMessage(), Toast.LENGTH_SHORT).show();
-                    }
-                });
     }
 }

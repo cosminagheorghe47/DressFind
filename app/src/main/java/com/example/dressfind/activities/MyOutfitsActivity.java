@@ -93,7 +93,11 @@ public class MyOutfitsActivity extends AppCompatActivity {
                 startActivity(scanIntent);
                 overridePendingTransition(0, 0);
                 return true;
-            } else return item.getItemId() == R.id.nav_profile;
+            } else if (item.getItemId() == R.id.nav_profile) {
+                Intent profileIntent = new Intent(MyOutfitsActivity.this, ProfileActivity.class);
+                startActivity(profileIntent);
+                return true;
+            }else return true;
         });
 
     }
