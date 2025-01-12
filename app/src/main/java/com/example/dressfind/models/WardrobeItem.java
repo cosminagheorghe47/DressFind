@@ -143,4 +143,19 @@ public class WardrobeItem implements Parcelable {
     public void setCategory(String category) {
         Category = category;
     }
+
+    @Override
+    public String toString() {
+        return "WardrobeItem{" +
+                "itemId='" + itemId + '\'' +
+                ", color='" + color + '\'' +
+                ", description='" + description + '\'' +
+                ", image='" + image + '\'' +
+                ", material='" + material + '\'' +
+                ", name='" + name + '\'' +
+                ", scanId='" + scanId + '\'' +
+                ", userId='" + userId + '\'' +
+                ", Category='" + Category + '\'' +
+                '}';
+    }
 }

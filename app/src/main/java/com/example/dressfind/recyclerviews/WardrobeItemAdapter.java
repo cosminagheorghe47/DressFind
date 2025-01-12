@@ -13,7 +13,6 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import com.example.dressfind.R;
 import com.example.dressfind.activities.ClothingDetailsActivity;
-import com.example.dressfind.activities.OutfitDetailsActivity;
 import com.example.dressfind.models.WardrobeItem;
 import com.squareup.picasso.Picasso;
 
