@@ -15,6 +15,7 @@ import com.example.dressfind.models.Outfit;
 import com.example.dressfind.models.OutfitsItems;
 import com.example.dressfind.models.WardrobeItem;
 import com.example.dressfind.recyclerviews.WardrobeItemAdapter;
+import com.google.android.material.bottomnavigation.BottomNavigationView;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.QueryDocumentSnapshot;
 
@@ -33,6 +34,9 @@ public class OutfitDetailsActivity extends AppCompatActivity {
 
     private TextView titlePage;
 
+    BottomNavigationView bottomNavigationView ;
+
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -50,6 +54,34 @@ public class OutfitDetailsActivity extends AppCompatActivity {
 
         titlePage = findViewById(R.id.titlePage);
         titlePage.setText(outfit.getName());
+
+        bottomNavigationView = findViewById(R.id.includeNavBar);
+        bottomNavigationView.setSelectedItemId(R.id.nav_outfits);
+
+        bottomNavigationView.setOnItemSelectedListener(item -> {
+            if (item.getItemId() == R.id.nav_outfits) {
+                return true;
+            } else if (item.getItemId() == R.id.nav_scan) {
+                Intent scanIntent = new Intent(OutfitDetailsActivity.this, MainActivity.class);
+                startActivity(scanIntent);
+                overridePendingTransition(0, 0);
+                return true;
+            } else if (item.getItemId() == R.id.nav_home) {
+                Intent scanIntent = new Intent(OutfitDetailsActivity.this, HomeActivity.class);
+                startActivity(scanIntent);
+                overridePendingTransition(0, 0);
+                return true;
+            } else if (item.getItemId() == R.id.nav_wardrobe) {
+                Intent scanIntent = new Intent(OutfitDetailsActivity.this, MyWardrobeActivity.class);
+                startActivity(scanIntent);
+                overridePendingTransition(0, 0);
+                return true;
+            } else if (item.getItemId() == R.id.nav_profile) {
+                Intent profileIntent = new Intent(OutfitDetailsActivity.this, ProfileActivity.class);
+                startActivity(profileIntent);
+                return true;
+            }else return true;
+        });
 
         Log.i("current outfit: ", String.valueOf(outfit));
         Log.i("current outfit id: ", outfit.getOutfitId());
@@ -112,6 +144,10 @@ public class OutfitDetailsActivity extends AppCompatActivity {
                 });
     }
 
-
+    @Override
+    protected void onResume() {
+        super.onResume();
+        bottomNavigationView.setSelectedItemId(R.id.nav_outfits);
+    }
 
 }
