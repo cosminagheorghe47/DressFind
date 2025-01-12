@@ -119,4 +119,17 @@ public class Outfit implements Parcelable {
         dest.writeString(Description);
         dest.writeString(Image);
     }
+
+    @Override
+    public String toString() {
+        return "Outfit{" +
+                "OutfitId='" + OutfitId + '\'' +
+                ", UserId='" + UserId + '\'' +
+                ", Name='" + Name + '\'' +
+                ", CreationDate=" + CreationDate +
+                ", Description='" + Description + '\'' +
+                ", ScheduledDate=" + ScheduledDate +
+                ", Image='" + Image + '\'' +
+                '}';
+    }
 }
