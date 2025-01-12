@@ -30,6 +30,7 @@ public class HomeActivity extends AppCompatActivity {
     CardView SearchedProducts;
     CardView ExploreOutfits;
     private ActivityResultLauncher<Intent> pinterestAuthLauncher;
+    private static final String TAG = "PinterestAPI";
 
     TextView seePinterestAccTV ;
     @Override
@@ -142,10 +143,12 @@ public class HomeActivity extends AppCompatActivity {
             @Override
             public void onClick(View view) {
                 if (sharedPreferencesService.getAccessToken()!=null && sharedPreferencesService.isAccessTokenExpired()) {
+                    Log.e(TAG,"Pinterest Token not null and token is expired.");
                     pinterestService.refreshAccessToken(sharedPreferencesService.getRefreshToken(), new PinterestService.TokenCallback() {
                         @Override
                         public void onTokenReceived(String newAccessToken) {
                             sharedPreferencesService.saveAccessToken(newAccessToken);
+                            Log.e(TAG,"Pinterest Token refreshed.");
                             Intent callbackIntent = new Intent(HomeActivity.this, PinterestCallbackActivity.class);
                             callbackIntent.putExtra("fetchProfile", true);
                             startActivity(callbackIntent);
@@ -160,6 +163,7 @@ public class HomeActivity extends AppCompatActivity {
                 }
                 else if(sharedPreferencesService.getAccessToken()!=null && !sharedPreferencesService.isAccessTokenExpired())
                 {
+                    Log.e(TAG,"Pinterest Token not null and token NOT expired.");
                     Intent callbackIntent = new Intent(HomeActivity.this, PinterestCallbackActivity.class);
                     callbackIntent.putExtra("fetchProfile", true);
                     startActivity(callbackIntent);
@@ -167,12 +171,12 @@ public class HomeActivity extends AppCompatActivity {
                 else {
                     //connect to pinterest logic
 
-
+                    Log.e(TAG,"First connection to spotify cuz token is null");
 //                Log.e("PinterestAPI", "tokens and expiries: " + sharedPreferencesService.getAccessToken() + "    " + (sharedPreferencesService.getRefreshToken()!=null) + "    "+ (sharedPreferencesService.isRefreshTokenExpired())+ " "+ sharedPreferencesService.isAccessTokenExpired());
                     Log.e("PinterestAPI", "Starting to connect to Pinterest");
                     String clientId = "1509034"; //app id
                     String redirectUri = "com.example.dressfind://home";
-                    String scopes = "boards:read,pins:read,user_accounts:read";
+                    String scopes = "boards:read,pins:read,user_accounts:read,boards:write,pins:write";
                     String authUrl = "https://www.pinterest.com/oauth/?" +
                             "client_id=" + clientId + "&" +
                             "redirect_uri=" + redirectUri + "&" +

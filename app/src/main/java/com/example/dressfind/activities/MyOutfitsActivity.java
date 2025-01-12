@@ -38,6 +38,8 @@ public class MyOutfitsActivity extends AppCompatActivity {
     private Button button_generate_outfit;
 
 
+    private Button calendarButton;
+
     private final List<Outfit> outfits = new ArrayList<>();
 
     @Override
@@ -47,7 +49,11 @@ public class MyOutfitsActivity extends AppCompatActivity {
 
         db = FirebaseFirestore.getInstance();
         auth = FirebaseAuth.getInstance();
-
+        calendarButton = findViewById(R.id.buttonSeeCalendar);
+        calendarButton.setOnClickListener(v -> {
+            Intent intent = new Intent(MyOutfitsActivity.this, CaledarActivity.class);
+            startActivity(intent);
+        });
         recyclerViewOutfits = findViewById(R.id.recyclerView_outfits);
         recyclerViewOutfits.setLayoutManager(new GridLayoutManager(this, 2));
         outfitsAdapter = new OutfitsAdapter(this, outfits);

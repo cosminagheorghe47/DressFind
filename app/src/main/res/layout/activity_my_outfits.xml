@@ -33,10 +33,9 @@
     <LinearLayout
         android:layout_width="match_parent"
         android:id="@+id/grid"
-        android:layout_height="match_parent"
+        android:layout_height="480dp"
         android:orientation="vertical"
-        android:layout_below="@+id/header"
-        android:layout_above="@+id/button_generate_outfit">
+        android:layout_below="@+id/header">
 
         <androidx.recyclerview.widget.RecyclerView
             android:id="@+id/recyclerView_outfits"
@@ -48,18 +47,46 @@
 
     </LinearLayout>
 
-
-    <Button
-        android:id="@+id/button_generate_outfit"
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:id="@+id/buttonsLayout"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:text="Generate New Outfit"
-        android:textSize="18sp"
-        android:backgroundTint="@color/black"
-        android:textColor="@android:color/white"
-        android:padding="12dp"
-        android:layout_margin="16dp"
-        android:layout_above="@+id/nav"/>
+        android:layout_above="@+id/nav"
+        android:layout_below="@+id/grid"
+        android:layout_alignParentStart="true"
+        android:layout_alignParentEnd="true"
+        android:layout_marginEnd="0dp">
+
+        <Button
+            android:id="@+id/buttonSeeCalendar"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:backgroundTint="@color/black"
+            android:padding="12dp"
+            android:text="See Calendar of Outfits"
+            android:drawableStart="@drawable/baseline_calendar_month_24"
+            android:drawablePadding="8dp"
+            android:textColor="@android:color/white"
+            android:textSize="18sp"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent" />
+
+        <Button
+            android:id="@+id/button_generate_outfit"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="5dp"
+            android:backgroundTint="@color/black"
+            android:padding="12dp"
+            android:text="Generate New Outfit"
+            android:textColor="@android:color/white"
+            android:textSize="18sp"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/buttonSeeCalendar" />
+    </androidx.constraintlayout.widget.ConstraintLayout>
 
     <androidx.cardview.widget.CardView
         android:id="@+id/nav"

@@ -29,7 +29,7 @@
             android:background="@android:color/transparent" />
     </LinearLayout>
 
-    <LinearLayout
+    <androidx.constraintlayout.widget.ConstraintLayout
         android:id="@+id/titleLayout"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
@@ -40,15 +40,32 @@
         <TextView
             android:id="@+id/titlePage"
             android:layout_width="match_parent"
-            android:layout_height="100dp"
+            android:layout_height="wrap_content"
+            android:background="@android:color/transparent"
             android:gravity="center"
+            android:padding="10dp"
             android:text="Outfit name"
-            android:textSize="24sp"
-            android:padding="16dp"
             android:textColor="@color/color1"
+            android:textSize="24sp"
             android:textStyle="bold"
-            android:background="@android:color/transparent" />
-    </LinearLayout>
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent" />
+
+        <Button
+            android:id="@+id/scheduleOutfitButton"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:padding="10dp"
+            android:text="Schedule Outfit"
+            android:textColor="@android:color/white"
+            android:textSize="16sp"
+            android:layout_marginTop="10dp"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/titlePage" />
+    </androidx.constraintlayout.widget.ConstraintLayout>
 
     <!-- RecyclerView Section -->
     <LinearLayout

@@ -46,7 +46,7 @@ public class OutfitsAdapter extends RecyclerView.Adapter<OutfitsAdapter.OutfitsH
 
         holder.itemView.setOnClickListener(v -> {
             Intent intent = new Intent(context, OutfitDetailsActivity.class);
-            intent.putExtra("currentOutfit", outfit);
+            intent.putExtra("outfitId", outfit.getOutfitId());
             context.startActivity(intent);
         });
     }
@@ -60,6 +60,7 @@ public class OutfitsAdapter extends RecyclerView.Adapter<OutfitsAdapter.OutfitsH
 
         ImageView outfitImage;
         TextView outfitName;
+
 
         public OutfitsHolder(@NonNull View itemView) {
             super(itemView);
