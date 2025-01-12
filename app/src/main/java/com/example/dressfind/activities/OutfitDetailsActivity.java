@@ -125,9 +125,7 @@ public class OutfitDetailsActivity extends AppCompatActivity {
 
         titlePage = findViewById(R.id.titlePage);
          
-        publishButton = findViewById(R.id.button_publish_outfit);  // Find the button by ID
 
-        setPublishButtonText(outfit);
 
         bottomNavigationView = findViewById(R.id.includeNavBar);
         bottomNavigationView.setSelectedItemId(R.id.nav_outfits);
@@ -156,14 +154,14 @@ public class OutfitDetailsActivity extends AppCompatActivity {
                 return true;
             } else return true;
         });
-       publishButton.setOnClickListener(v -> {
-                  togglePublishStatus(outfit);
-              });
-          }
+
+        publishButton = findViewById(R.id.button_publish_outfit);
+
     }
     @Override
     protected void onResume() {
         super.onResume();
+        bottomNavigationView.setSelectedItemId(R.id.nav_outfits);
         fetchOutfitDetails();
     }
     private void fetchOutfitDetails() {
@@ -179,6 +177,10 @@ public class OutfitDetailsActivity extends AppCompatActivity {
                         currentOutfit = documentSnapshot.toObject(Outfit.class);
                         if (currentOutfit != null) {
                             currentOutfit.setOutfitId(documentSnapshot.getId());
+                            publishButton.setOnClickListener(v -> {
+                                togglePublishStatus(currentOutfit);
+                            });
+                            setPublishButtonText(currentOutfit);
                             updateUI();
                         }
                     } else {
@@ -337,12 +339,6 @@ public class OutfitDetailsActivity extends AppCompatActivity {
             Toast.makeText(this, "Outfit ID is missing. Cannot schedule outfit.", Toast.LENGTH_SHORT).show();
         }
     }
-}
 
 
-    @Override
-    protected void onResume() {
-        super.onResume();
-        bottomNavigationView.setSelectedItemId(R.id.nav_outfits);
-    }
 }
