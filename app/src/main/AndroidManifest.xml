@@ -64,6 +64,9 @@
             android:name=".activities.HistoryActivity"
             android:exported="false" />
         <activity
+            android:name=".activities.ExploreActivity"
+            android:exported="false" />
+        <activity
             android:name=".activities.ProfileActivity"
             android:exported="false" />
         <activity
