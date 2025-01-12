@@ -6,17 +6,18 @@
     android:layout_height="match_parent"
     android:orientation="vertical"
     tools:context=".activities.OutfitDetailsActivity"
-    android:id="@+id/parent">
+    android:id="@+id/parentLayout">
 
+    <!-- Header Section -->
     <LinearLayout
+        android:id="@+id/headerLayout"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:orientation="vertical"
-        android:id="@+id/header"
         android:background="@drawable/background_gradient">
 
         <TextView
-            android:id="@+id/textView_title"
+            android:id="@+id/titleTextView"
             android:layout_width="match_parent"
             android:layout_height="100dp"
             android:gravity="center"
@@ -26,38 +27,59 @@
             android:textColor="@android:color/black"
             android:textStyle="bold"
             android:background="@android:color/transparent" />
-
     </LinearLayout>
 
-
     <LinearLayout
+        android:id="@+id/titleLayout"
         android:layout_width="match_parent"
-        android:id="@+id/grid"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:layout_below="@id/headerLayout"
+        >
+
+        <TextView
+            android:id="@+id/titlePage"
+            android:layout_width="match_parent"
+            android:layout_height="100dp"
+            android:gravity="center"
+            android:text="Outfit name"
+            android:textSize="24sp"
+            android:padding="16dp"
+            android:textColor="@color/color1"
+            android:textStyle="bold"
+            android:background="@android:color/transparent" />
+    </LinearLayout>
+
+    <!-- RecyclerView Section -->
+    <LinearLayout
+        android:id="@+id/recyclerViewContainer"
+        android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:orientation="vertical"
-        android:layout_below="@+id/header"
-        >
+        android:layout_below="@id/titleLayout">
+
         <androidx.recyclerview.widget.RecyclerView
-            android:id="@+id/recyclerView_outfits"
+            android:id="@+id/recyclerViewWardrobeItems"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:orientation="vertical"
             android:scrollbars="vertical"
             android:padding="20dp" />
-
     </LinearLayout>
 
+    <!-- Bottom Navigation Section -->
     <androidx.cardview.widget.CardView
-        android:id="@+id/nav"
+        android:id="@+id/bottomNavigationCardView"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:layout_alignParentBottom="true"
+        android:layout_marginBottom="0dp"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        android:layout_alignParentBottom="true"
-        android:layout_marginBottom="0dp">
+        app:layout_constraintStart_toStartOf="parent">
+
         <include
-            android:id="@+id/includeNavBar"
+            android:id="@+id/bottomNavigationBar"
             layout="@layout/bottom_navigation_bar" />
     </androidx.cardview.widget.CardView>
 
