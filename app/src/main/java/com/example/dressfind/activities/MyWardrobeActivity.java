@@ -43,7 +43,6 @@ public class MyWardrobeActivity extends AppCompatActivity {
     private CategoryAdapter categoryAdapter;
     private WardrobeItemAdapter wardrobeItemAdapter;
 
-
     private final List<String> categories = Arrays.asList("T-Shirts", "Shirts", "Pullovers", "Pants", "Dresses", "Coats", "Sneakers", "Sandals", "Boots", "Bags");
     private final List<WardrobeItem> wardrobeItems = new ArrayList<>();
     private static final String TAG = "PinterestAPI";
