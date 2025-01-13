@@ -1,6 +1,8 @@
 package com.example.dressfind.activities;
 
 import androidx.appcompat.app.AppCompatActivity;
+
+import android.annotation.SuppressLint;
 import android.os.Bundle;
 import android.content.Intent;
 import android.net.Uri;
@@ -14,6 +16,7 @@ import com.example.dressfind.R;
 import com.example.dressfind.models.User;
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
+import com.google.android.material.bottomnavigation.BottomNavigationView;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
@@ -27,6 +30,7 @@ import java.text.SimpleDateFormat;
 import java.util.Locale;
 
 public class ProfileActivity extends AppCompatActivity {
+    BottomNavigationView bottomNavigationView ;
 
     private ImageView imageViewProfile;
     private Button buttonSelectImage;
@@ -41,6 +45,7 @@ public class ProfileActivity extends AppCompatActivity {
     private FirebaseAuth auth;
     private Uri imageUri;
 
+    @SuppressLint("MissingInflatedId")
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -67,6 +72,37 @@ public class ProfileActivity extends AppCompatActivity {
                 openGallery();
             }
         });
+
+
+        bottomNavigationView = findViewById(R.id.includeNavBar);
+
+        bottomNavigationView.setSelectedItemId(R.id.nav_profile);
+
+        bottomNavigationView.setOnItemSelectedListener(item -> {
+            if (item.getItemId() == R.id.nav_profile) {
+                return true;
+            } else if (item.getItemId() == R.id.nav_scan) {
+                Intent scanIntent = new Intent(ProfileActivity.this, MainActivity.class);
+                startActivity(scanIntent);
+                overridePendingTransition(0, 0);
+                return true;
+            } else if (item.getItemId() == R.id.nav_home) {
+                Intent scanIntent = new Intent(ProfileActivity.this, HomeActivity.class);
+                startActivity(scanIntent);
+                overridePendingTransition(0, 0);
+                return true;
+            } else if (item.getItemId() == R.id.nav_outfits) {
+                Intent scanIntent = new Intent(ProfileActivity.this, MyOutfitsActivity.class);
+                startActivity(scanIntent);
+                overridePendingTransition(0, 0);
+                return true;
+            } else if (item.getItemId() == R.id.nav_wardrobe) {
+                Intent profileIntent = new Intent(ProfileActivity.this, MyWardrobeActivity.class);
+                startActivity(profileIntent);
+                return true;
+            }else return true;
+        });
+
     }
 
     private void checkForExistingProfileImage() {
@@ -161,5 +197,9 @@ public class ProfileActivity extends AppCompatActivity {
         } else {
             Toast.makeText(this, "Please select an image first", Toast.LENGTH_SHORT).show();
         }
+    }
+    protected void onResume() {
+        super.onResume();
+        bottomNavigationView.setSelectedItemId(R.id.nav_profile);
     }
 }
