@@ -1,8 +1,6 @@
 package com.example.dressfind.activities;
 
 import androidx.appcompat.app.AppCompatActivity;
-
-import android.annotation.SuppressLint;
 import android.os.Bundle;
 import android.content.Intent;
 import android.net.Uri;
@@ -45,7 +43,6 @@ public class ProfileActivity extends AppCompatActivity {
     private FirebaseAuth auth;
     private Uri imageUri;
 
-    @SuppressLint("MissingInflatedId")
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
