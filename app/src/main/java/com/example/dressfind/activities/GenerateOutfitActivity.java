@@ -7,6 +7,7 @@ import android.graphics.Color;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.MotionEvent;
+import android.view.ScaleGestureDetector;
 import android.view.View;
 import android.widget.EditText;
 import android.widget.FrameLayout;
@@ -60,6 +61,8 @@ public class GenerateOutfitActivity extends AppCompatActivity {
     private EditText editText_title;
     private FrameLayout canvasOutfit;
     private RelativeLayout edit_button;
+    private ScaleGestureDetector scaleGestureDetector;
+    private float scaleFactor = 1.f;
 
     private final List<String> categories = Arrays.asList("T-Shirts", "Shirts", "Pullovers", "Pants", "Dresses", "Coats", "Sneakers", "Sandals", "Boots", "Bags");
     private final List<WardrobeItem> wardrobeItems = new ArrayList<>();
@@ -92,6 +95,8 @@ public class GenerateOutfitActivity extends AppCompatActivity {
         canvasOutfit = findViewById(R.id.canvas_outfit);
         editText_title = findViewById(R.id.editText_title);
         edit_button = findViewById(R.id.title);
+
+        scaleGestureDetector = new ScaleGestureDetector(this, new ScaleListener());
 
         loadCategories();
 
@@ -241,48 +246,89 @@ public class GenerateOutfitActivity extends AppCompatActivity {
     }
 
     private void addItemToCanvas(WardrobeItem item) {
-        // Creăm un ImageView pentru articol
+
         ImageView imageView = new ImageView(this);
         Picasso.get().load(item.getImage()).into(imageView);
 
         imageView.setBackgroundColor(Color.TRANSPARENT);
 
-        // Creștem dimensiunea imaginii pe canvas
         FrameLayout.LayoutParams params = new FrameLayout.LayoutParams(600, 600); // Dimensiuni mai mari
         imageView.setLayoutParams(params);
         imageView.setX(100); // Poziție inițială X
         imageView.setY(100); // Poziție inițială Y
         canvasOutfit.addView(imageView);
 
-        // Adăugăm articolul în lista `selectedItemsOnCanvas`
         selectedItemsOnCanvas.add(item);
 
-        // Adăugăm un buton "X" pentru ștergere
         ImageView deleteButton = new ImageView(this);
         deleteButton.setImageResource(R.drawable.delete);
         FrameLayout.LayoutParams deleteParams = new FrameLayout.LayoutParams(50, 50);
         deleteButton.setLayoutParams(deleteParams);
 
-        // Poziționăm butonul "X" în colțul imaginii
-        deleteButton.setX(imageView.getX() + params.width - 90); // Poziție relativă
+        deleteButton.setX(imageView.getX() + params.width - 130); // Poziție relativă
         deleteButton.setY(imageView.getY()); // Poziție relativă
         canvasOutfit.addView(deleteButton);
 
-        // Adăugăm funcționalitate de mutare imaginii și sincronizare cu butonul "X"
         imageView.setOnTouchListener(new DragTouchListener(imageView, deleteButton));
 
-        // Funcționalitate de ștergere
         deleteButton.setOnClickListener(v -> {
-            // Eliminăm articolul din lista `selectedItemsOnCanvas`
             selectedItemsOnCanvas.remove(item);
 
-            // Eliminăm imaginea și butonul de pe canvas
             canvasOutfit.removeView(imageView);
             canvasOutfit.removeView(deleteButton);
         });
+        imageView.setOnTouchListener(new View.OnTouchListener() {
+            private float dX, dY;
+            private int lastAction;
+
+            @Override
+            public boolean onTouch(View v, MotionEvent event) {
+                scaleGestureDetector.onTouchEvent(event); // Gestionează zoom-ul
+
+                switch (event.getActionMasked()) {
+                    case MotionEvent.ACTION_DOWN:
+                        dX = v.getX() - event.getRawX();
+                        dY = v.getY() - event.getRawY();
+                        lastAction = MotionEvent.ACTION_DOWN;
+                        break;
+
+                    case MotionEvent.ACTION_MOVE:
+                        // Dacă este un drag
+                        v.setX(event.getRawX() + dX);
+                        v.setY(event.getRawY() + dY);
+                        lastAction = MotionEvent.ACTION_MOVE;
+                        break;
+
+                    case MotionEvent.ACTION_UP:
+                        // Dacă este un tap simplu și nu o mișcare
+                        if (lastAction == MotionEvent.ACTION_DOWN) {
+                            v.performClick();
+                        }
+                        break;
+
+                    default:
+                        return false;
+                }
+
+                // Aplică zoom
+                v.setScaleX(scaleFactor);
+                v.setScaleY(scaleFactor);
+                deleteButton.setX(v.getX() + v.getWidth() * scaleFactor - deleteButton.getWidth());
+                deleteButton.setY(v.getY() - deleteButton.getHeight() / 2);
+                return true;
+            }
+        });
+
     }
 
 
-
+    private class ScaleListener extends ScaleGestureDetector.SimpleOnScaleGestureListener {
+        @Override
+        public boolean onScale(ScaleGestureDetector detector) {
+            scaleFactor *= detector.getScaleFactor();
+            scaleFactor = Math.max(0.1f, Math.min(scaleFactor, 5.0f));
+            return true;
+        }
+    }
 
 }

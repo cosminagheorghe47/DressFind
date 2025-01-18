@@ -28,10 +28,11 @@ public class DragTouchListener implements View.OnTouchListener{
                 v.setY(event.getRawY() + dY);
 
                 // Sincronizăm poziția butonului "X"
-                deleteButton.setX(v.getX() + v.getWidth() - deleteButton.getWidth() - 40);
-                deleteButton.setY(v.getY());
+//                deleteButton.setX(v.getX() + v.getWidth() - deleteButton.getWidth() - 10); // Poziție corectată
+//                deleteButton.setY(v.getY() - deleteButton.getHeight() / 2);
                 break;
-
+            case MotionEvent.ACTION_UP:
+               break;
             default:
                 return false;
         }
