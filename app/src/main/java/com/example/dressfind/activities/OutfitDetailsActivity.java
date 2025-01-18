@@ -137,7 +137,7 @@ public class OutfitDetailsActivity extends AppCompatActivity {
                 overridePendingTransition(0, 0);
                 return true;
             } else if (item.getItemId() == R.id.nav_home) {
-                Intent scanIntent = new Intent(OutfitDetailsActivity.this, HomeActivity.class);
+                Intent scanIntent = new Intent(OutfitDetailsActivity.this, ExploreActivity.class);
                 startActivity(scanIntent);
                 overridePendingTransition(0, 0);
                 return true;

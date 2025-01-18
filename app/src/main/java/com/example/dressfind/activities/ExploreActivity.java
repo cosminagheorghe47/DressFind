@@ -1,5 +1,6 @@
 package com.example.dressfind.activities;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.util.Log;
 import androidx.annotation.NonNull;
@@ -10,6 +11,7 @@ import androidx.recyclerview.widget.RecyclerView;
 import com.example.dressfind.R;
 import com.example.dressfind.models.Outfit;
 import com.example.dressfind.models.User;
+import com.google.android.material.bottomnavigation.BottomNavigationView;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
@@ -37,6 +39,7 @@ public class ExploreActivity extends AppCompatActivity {
     private DatabaseReference outfitRef;
     private FirebaseFirestore db;
     private StorageReference storageRef;
+    BottomNavigationView bottomNavigationView ;
 
     private RecyclerView outfitsRecyclerView;
     private OutfitsAdapter outfitsAdapter;
@@ -47,7 +50,33 @@ public class ExploreActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_explore);
+        bottomNavigationView = findViewById(R.id.includeNavBar);
+        bottomNavigationView.setSelectedItemId(R.id.nav_home);
 
+        bottomNavigationView.setOnItemSelectedListener(item -> {
+            if (item.getItemId() == R.id.nav_home) {
+                return true;
+            } else if (item.getItemId() == R.id.nav_outfits) {
+                Intent scanIntent = new Intent(ExploreActivity.this, MyOutfitsActivity.class);
+                startActivity(scanIntent);
+                overridePendingTransition(0, 0);
+                return true;
+            } else if (item.getItemId() == R.id.nav_scan) {
+                Intent scanIntent = new Intent(ExploreActivity.this, MainActivity.class);
+                startActivity(scanIntent);
+                overridePendingTransition(0, 0);
+                return true;
+            } else if (item.getItemId() == R.id.nav_wardrobe) {
+                Intent scanIntent = new Intent(ExploreActivity.this, MyWardrobeActivity.class);
+                startActivity(scanIntent);
+                overridePendingTransition(0, 0);
+                return true;
+            }else if (item.getItemId() == R.id.nav_profile) {
+                Intent profileIntent = new Intent(ExploreActivity.this, ProfileActivity.class);
+                startActivity(profileIntent);
+                return true;
+            }else return true;
+        });
         outfitsRecyclerView = findViewById(R.id.outfitsRecyclerView);
         outfitsRecyclerView.setLayoutManager(new LinearLayoutManager(this));
 

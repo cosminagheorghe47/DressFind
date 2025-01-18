@@ -56,7 +56,7 @@ public class CaledarActivity extends AppCompatActivity {
                 overridePendingTransition(0, 0);
                 return true;
             } else if (item.getItemId() == R.id.nav_home) {
-                Intent scanIntent = new Intent(CaledarActivity.this, HomeActivity.class);
+                Intent scanIntent = new Intent(CaledarActivity.this, ExploreActivity.class);
                 startActivity(scanIntent);
                 overridePendingTransition(0, 0);
                 return true;

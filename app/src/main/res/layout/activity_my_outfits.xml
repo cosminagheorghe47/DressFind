@@ -33,7 +33,7 @@
     <LinearLayout
         android:layout_width="match_parent"
         android:id="@+id/grid"
-        android:layout_height="480dp"
+        android:layout_height="490dp"
         android:orientation="vertical"
         android:layout_below="@+id/header">
 
@@ -62,7 +62,7 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:backgroundTint="@color/black"
-            android:padding="12dp"
+            android:padding="5dp"
             android:text="See Calendar of Outfits"
             android:drawableStart="@drawable/baseline_calendar_month_24"
             android:drawablePadding="8dp"
@@ -78,7 +78,7 @@
             android:layout_height="wrap_content"
             android:layout_marginTop="5dp"
             android:backgroundTint="@color/black"
-            android:padding="12dp"
+            android:padding="5dp"
             android:text="Generate New Outfit"
             android:textColor="@android:color/white"
             android:textSize="18sp"

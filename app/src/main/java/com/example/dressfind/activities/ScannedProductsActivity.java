@@ -30,7 +30,7 @@ public class ScannedProductsActivity extends AppCompatActivity {
                 overridePendingTransition(0, 0);
                 return true;
             } else if (item.getItemId() == R.id.nav_home) {
-                Intent scanIntent = new Intent(ScannedProductsActivity.this, HomeActivity.class);
+                Intent scanIntent = new Intent(ScannedProductsActivity.this, ExploreActivity.class);
                 startActivity(scanIntent);
                 return true;
             } else if (item.getItemId() == R.id.nav_outfits) {
