@@ -13,7 +13,9 @@ import android.app.Dialog;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.graphics.Bitmap;
+import android.net.Uri;
 import android.os.Bundle;
+import android.provider.MediaStore;
 import android.util.Log;
 import android.view.View;
 import android.view.Window;
@@ -38,8 +40,11 @@ import com.google.firebase.storage.FirebaseStorage;
 import com.google.firebase.storage.StorageReference;
 import com.google.firebase.storage.UploadTask;
 import com.squareup.picasso.Picasso;
+import com.yalantis.ucrop.UCrop;
 
 import java.io.ByteArrayOutputStream;
+import java.io.File;
+import java.io.FileOutputStream;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
@@ -156,8 +161,15 @@ public class MainActivity extends AppCompatActivity implements ProductSearchTask
                     Bitmap photo = (Bitmap) result.getData().getExtras().get("data");
 
                     if (photo != null) {
-                        uploadToFirebase(photo);
-                        capturedImage.setImageBitmap(photo);
+                        Uri sourceUri = saveBitmapToCache(photo);
+                        Uri destinationUri = Uri.fromFile(new File(getCacheDir(), "cropped_image.jpg"));
+
+                        UCrop.of(sourceUri, destinationUri)
+                                .withAspectRatio(1, 1) // Raport de aspect pătrat (modificabil)
+                                .withMaxResultSize(500, 500) // Dimensiunea maximă (modificabilă)
+                                .start(MainActivity.this);
+//                        uploadToFirebase(photo);
+//                        capturedImage.setImageBitmap(photo);
                     } else {
                         Toast.makeText(this, "Failed to capture image.", Toast.LENGTH_SHORT).show();
                     }
@@ -172,6 +184,46 @@ public class MainActivity extends AppCompatActivity implements ProductSearchTask
         this.matchingImages.clear();
         this.matchingImages.addAll(matchingImages);
         matchingImageAdapter.notifyDataSetChanged();
+    }
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+
+        if (requestCode == UCrop.REQUEST_CROP && resultCode == RESULT_OK) {
+            Uri croppedImageUri = UCrop.getOutput(data);
+
+            if (croppedImageUri != null) {
+                Bitmap croppedBitmap = getBitmapFromUri(croppedImageUri);
+
+                // Urcă imaginea decupată pe Firebase
+                uploadToFirebase(croppedBitmap);
+                // Afișează imaginea decupată în ImageView
+                capturedImage.setImageURI(croppedImageUri);
+
+            }
+        } else if (requestCode == UCrop.REQUEST_CROP && resultCode == UCrop.RESULT_ERROR) {
+            Throwable cropError = UCrop.getError(data);
+            if (cropError != null) {
+                Log.e("MainActivity", "Crop error: ", cropError);
+            }
+        }
+    }
+    private Uri saveBitmapToCache(Bitmap bitmap) {
+        File cacheFile = new File(getCacheDir(), "temp_image.jpg");
+        try (FileOutputStream fos = new FileOutputStream(cacheFile)) {
+            bitmap.compress(Bitmap.CompressFormat.JPEG, 100, fos);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return Uri.fromFile(cacheFile);
+    }
+    private Bitmap getBitmapFromUri(Uri uri) {
+        try {
+            return MediaStore.Images.Media.getBitmap(getContentResolver(), uri);
+        } catch (Exception e) {
+            e.printStackTrace();
+            return null;
+        }
     }
 
     @Override
