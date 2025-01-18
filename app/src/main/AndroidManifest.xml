@@ -30,6 +30,12 @@
             android:name=".activities.ClothingDetailsActivity"
             android:exported="false" />
         <activity
+            android:name="com.yalantis.ucrop.UCropActivity"
+            android:label="UCrop"
+            android:screenOrientation="portrait"
+            android:theme="@style/Theme.AppCompat.Light.Dialog">
+        </activity>
+        <activity
             android:name=".activities.OutfitDetailsActivity"
             android:exported="false" />
         <activity
