@@ -17,7 +17,6 @@ import android.net.Uri;
 import android.os.Bundle;
 import android.provider.MediaStore;
 import android.util.Log;
-import android.view.View;
 import android.view.Window;
 import android.view.WindowManager;
 import android.widget.Button;
@@ -31,6 +30,7 @@ import com.example.dressfind.models.ScannedImage;
 import com.example.dressfind.services.AppContext;
 import com.example.dressfind.services.CameraService;
 import com.example.dressfind.services.ImageAnalyzer;
+import com.example.dressfind.services.ImageProcessor;
 import com.example.dressfind.services.ImageUploader;
 import com.example.dressfind.services.ProductSearchTask;
 import com.google.firebase.FirebaseApp;
@@ -50,6 +50,7 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
+
 public class MainActivity extends AppCompatActivity implements ProductSearchTask.ProductSearchCallback {
     private FirebaseFirestore db;
     private CameraService cameraService;
@@ -61,6 +62,8 @@ public class MainActivity extends AppCompatActivity implements ProductSearchTask
     private List<MatchingImage> matchingImages = new ArrayList<>();
     private ProductSearchTask productSearchTask;
     private FirebaseAuth auth;
+
+    private boolean googleSearch;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -144,11 +147,21 @@ public class MainActivity extends AppCompatActivity implements ProductSearchTask
                 ActivityCompat.requestPermissions(MainActivity.this,
                         new String[]{Manifest.permission.CAMERA}, 100);
             }
+            googleSearch = true;
             popupDialog.dismiss();
         });
 
         btnAddWardrobe.setOnClickListener(v -> {
+            if (ContextCompat.checkSelfPermission(MainActivity.this, Manifest.permission.CAMERA)
+                    == PackageManager.PERMISSION_GRANTED) {
+                cameraService.openCamera(cameraLauncher);
+            } else {
+                ActivityCompat.requestPermissions(MainActivity.this,
+                        new String[]{Manifest.permission.CAMERA}, 100);
+            }
+
             Toast.makeText(MainActivity.this, "Add to Wardrobe action", Toast.LENGTH_SHORT).show();
+            googleSearch = false;
             popupDialog.dismiss();
         });
 
@@ -195,10 +208,26 @@ public class MainActivity extends AppCompatActivity implements ProductSearchTask
             if (croppedImageUri != null) {
                 Bitmap croppedBitmap = getBitmapFromUri(croppedImageUri);
 
-                // Urcă imaginea decupată pe Firebase
-                uploadToFirebase(croppedBitmap);
-                // Afișează imaginea decupată în ImageView
-                capturedImage.setImageURI(croppedImageUri);
+                if(googleSearch){
+                    // Urcă imaginea decupată pe Firebase
+                    uploadToFirebase(croppedBitmap);
+                    // Afișează imaginea decupată în ImageView
+                    capturedImage.setImageURI(croppedImageUri);
+                } else {
+                    // delete background
+                    ImageProcessor imageProcessor = new ImageProcessor();
+
+                    imageProcessor.removeBackgroundAsync(croppedImageUri, bitmap -> {
+                        if (bitmap != null) {
+                            capturedImage.setImageBitmap(bitmap);
+                        } else {
+                            Log.e("onBackgroundRemoved", "Failed to remove background");
+                        }
+                    });
+
+
+                }
+
 
             }
         } else if (requestCode == UCrop.REQUEST_CROP && resultCode == UCrop.RESULT_ERROR) {
