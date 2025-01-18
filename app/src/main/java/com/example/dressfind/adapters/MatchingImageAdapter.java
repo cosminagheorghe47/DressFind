@@ -40,17 +40,19 @@ public class MatchingImageAdapter extends RecyclerView.Adapter<MatchingImageAdap
     @Override
     public void onBindViewHolder(@NonNull ViewHolder holder, int position) {
         MatchingImage matchingImage = matchingImages.get(position);
+        if(matchingImage.getImageUrl() != null && !matchingImage.getImageUrl().isEmpty() && matchingImage.getPageUrl() != null){
+            Picasso.get()
+                    .load(matchingImage.getImageUrl())
+                    .into(holder.imageView);
 
-        Picasso.get()
-                .load(matchingImage.getImageUrl())
-                .into(holder.imageView);
+            holder.pageTitle.setText(matchingImage.getPageTitle());
 
-        holder.pageTitle.setText(matchingImage.getPageTitle());
+            holder.itemView.setOnClickListener(v -> {
+                Intent browserIntent = new Intent(Intent.ACTION_VIEW, Uri.parse(matchingImage.getPageUrl()));
+                context.startActivity(browserIntent);
+            });
+        }
 
-        holder.itemView.setOnClickListener(v -> {
-            Intent browserIntent = new Intent(Intent.ACTION_VIEW, Uri.parse(matchingImage.getPageUrl()));
-            context.startActivity(browserIntent);
-        });
     }
 
     @Override

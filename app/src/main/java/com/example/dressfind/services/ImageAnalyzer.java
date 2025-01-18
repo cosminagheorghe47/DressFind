@@ -46,8 +46,8 @@ public class ImageAnalyzer extends AsyncTask<String, Void, String> {
     @Override
     protected String doInBackground(String... params) {
         imageUrl = params[0];
-        String visionResponse = callVisionApi(imageUrl);
-        if (visionResponse == null) return null;
+//        String visionResponse = callVisionApi(imageUrl);
+//        if (visionResponse == null) return null;
 
 //        JSONArray labelAnnotations = getLabelsFromVisionResponse(visionResponse);
 //        List<String> labels = new ArrayList<>();
@@ -187,32 +187,83 @@ public class ImageAnalyzer extends AsyncTask<String, Void, String> {
 
             JSONArray partialMatchingImages = webDetection.optJSONArray("partialMatchingImages");
             JSONArray pagesWithMatchingImages = webDetection.optJSONArray("pagesWithMatchingImages");
+            JSONArray visuallySimilarImages = webDetection.optJSONArray("visuallySimilarImages");
+             List<MatchingImage> matchingImages1 = new ArrayList<>();
+             List<MatchingImage> matchingImages2 = new ArrayList<>();
+             List<MatchingImage> matchingImages3 = new ArrayList<>();
+            if (partialMatchingImages != null || pagesWithMatchingImages != null || visuallySimilarImages != null) {
+                for (int i = 0; i < Math.max(
+                        partialMatchingImages != null ? partialMatchingImages.length() : 0,
+                        Math.max(
+                                pagesWithMatchingImages != null ? pagesWithMatchingImages.length() : 0,
+                                visuallySimilarImages != null ? visuallySimilarImages.length() : 0)
+                ); i++)  {
+                    String imageUrl = "";
+                    JSONObject page = null;
+                    String similarUrl = "";
 
-            if (partialMatchingImages != null && pagesWithMatchingImages != null) {
-                for (int i = 0; i < Math.min(partialMatchingImages.length(), pagesWithMatchingImages.length()); i++) {
-                    String imageUrl = partialMatchingImages.getJSONObject(i).optString("url", "");
-                    JSONObject page = pagesWithMatchingImages.getJSONObject(i);
-                    String pageTitle = page.optString("pageTitle", "");
-                    String pageUrl = page.optString("url", "");
-                    matchingImages.add(new MatchingImage(imageUrl, pageTitle, pageUrl));
-                    for (String storeName : storeNames) {
-                        String concatenatedStoreName = storeName.toLowerCase().replaceAll(" ", "");
-                        if (pageTitle.toLowerCase().contains(concatenatedStoreName) ||
-                                pageUrl.toLowerCase().contains(concatenatedStoreName) ) {
-                            matchingImages.add(new MatchingImage(imageUrl, pageTitle, pageUrl));
-                            break;
-                        }
+                    if (partialMatchingImages != null && i < partialMatchingImages.length()) {
+                        imageUrl = partialMatchingImages.getJSONObject(i).optString("url", "");
                     }
-                    if(pageUrl.contains("zalando") ||
+
+                    if (pagesWithMatchingImages != null && i < pagesWithMatchingImages.length()) {
+                        page = pagesWithMatchingImages.getJSONObject(i);
+                    }
+
+                    if (visuallySimilarImages != null && i < visuallySimilarImages.length()) {
+                        similarUrl = visuallySimilarImages.getJSONObject(i).optString("url", "");
+                    }
+
+                    String pageTitle = page != null ? page.optString("pageTitle", "") : "";
+                    String pageUrl = page != null ? page.optString("url", "") : "";
+                    if(imageUrl!="")matchingImages.add(new MatchingImage(imageUrl, pageTitle, imageUrl));
+                    if(similarUrl!="")matchingImages.add(new MatchingImage(similarUrl, pageTitle, similarUrl));
+                    if(pageUrl!="")matchingImages.add(new MatchingImage(imageUrl, pageTitle, pageUrl));
+//                    if(imageUrl!="")matchingImages1.add(new MatchingImage(imageUrl, pageTitle, imageUrl));
+//                    if(similarUrl!="")matchingImages3.add(new MatchingImage(similarUrl, pageTitle, similarUrl));
+//                    if(pageUrl!="")matchingImages2.add(new MatchingImage(imageUrl, pageTitle, pageUrl));
+//                    for (String storeName : storeNames) {
+//                        String concatenatedStoreName = storeName.toLowerCase().replaceAll(" ", "");
+//                        if (pageTitle.toLowerCase().contains(concatenatedStoreName) ||
+//                                pageUrl.toLowerCase().contains(concatenatedStoreName)){
+//                            matchingImages.add(new MatchingImage(imageUrl, pageTitle, pageUrl));
+//                        }
+//                        if ( similarUrl.toLowerCase().contains(concatenatedStoreName) ){
+//                            matchingImages.add(new MatchingImage(similarUrl, pageTitle, similarUrl));
+//                        }
+//                        if ( imageUrl.toLowerCase().contains(concatenatedStoreName) ){
+//                            matchingImages.add(new MatchingImage(imageUrl, pageTitle, imageUrl));
+//                        }
+//                    }
+
+                    if (pageUrl.contains("zalando") ||
                             pageUrl.contains("aboutyou.ro") ||
                             pageUrl.contains("asos") ||
                             pageUrl.contains("puma") ||
                             pageUrl.contains("zara.com/ro") ||
                             pageUrl.contains("bershka.com/ro") ||
-                            pageUrl.contains("mango.com/ro")){
+                            pageUrl.contains("mango.com/ro")) {
                         matchingImages.add(new MatchingImage(imageUrl, pageTitle, pageUrl));
                     }
+                    if (similarUrl.contains("zalando") ||
+                            similarUrl.contains("aboutyou.ro") ||
+                            similarUrl.contains("asos") ||
+                            similarUrl.contains("puma") ||
+                            similarUrl.contains("zara.com/ro") ||
+                            similarUrl.contains("bershka.com/ro") ||
+                            similarUrl.contains("hm")) {
+                        matchingImages.add(new MatchingImage(imageUrl, pageTitle, similarUrl));
+                    }
                 }
+//                for(MatchingImage matchingImage : matchingImages1){
+//                    matchingImages.add(new MatchingImage(matchingImage.getImageUrl(), matchingImage.getPageTitle(), matchingImage.getPageUrl()));
+//                }
+//                for(MatchingImage matchingImage : matchingImages2){
+//                    matchingImages.add(new MatchingImage(matchingImage.getImageUrl(), matchingImage.getPageTitle(), matchingImage.getPageUrl()));
+//                }
+//                for(MatchingImage matchingImage : matchingImages3){
+//                    matchingImages.add(new MatchingImage(matchingImage.getImageUrl(), matchingImage.getPageTitle(), matchingImage.getPageUrl()));
+//                }
             }
         } catch (JSONException e) {
             Log.e("ProductSearch", "Error parsing response", e);
@@ -229,7 +280,9 @@ public class ImageAnalyzer extends AsyncTask<String, Void, String> {
             for (int i = 0; i < results.length(); i++) {
                 JSONObject result = results.getJSONObject(i);
                 String name = result.getString("name");
-                storeNames.add(name.toLowerCase());
+//                storeNames.add(name.toLowerCase());
+                storeNames.add(name.toLowerCase().replaceAll("\\s+", ""));
+
             }
         } catch (JSONException e) {
             Log.e("ProductSearch", "Error parsing response", e);
