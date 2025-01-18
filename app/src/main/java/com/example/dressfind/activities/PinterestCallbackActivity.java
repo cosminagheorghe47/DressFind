@@ -17,7 +17,7 @@ import com.squareup.picasso.Picasso;
 
 public class PinterestCallbackActivity extends AppCompatActivity {
 
-    private TextView tvUsername, tvBusinessName, tvFollowers, tvBoards, tvPins,  tvAbout;
+    private TextView tvUsername, tvBusinessName, tvFollowers, tvBoards, tvPins;
     private ImageView ivProfileImage;
 
     @Override
@@ -54,7 +54,6 @@ public class PinterestCallbackActivity extends AppCompatActivity {
         tvFollowers = findViewById(R.id.tvFollowers);
         tvBoards = findViewById(R.id.tvBoards);
         tvPins = findViewById(R.id.tvPins);
-        tvAbout = findViewById(R.id.tvAbout);
         ivProfileImage = findViewById(R.id.ivProfileImage);
 
     }
@@ -96,7 +95,6 @@ public class PinterestCallbackActivity extends AppCompatActivity {
             tvFollowers.setText("Followers: " + profile.getFollowerCount());
             tvBoards.setText("Boards: "+ profile.getBoardCount());
             tvPins.setText("Pins: "+ profile.getPinCount());
-            tvAbout.setText("Boards: "+ profile.getAbout());
             Picasso.get().load(profile.getProfileImage()).into(ivProfileImage);
         });
     }

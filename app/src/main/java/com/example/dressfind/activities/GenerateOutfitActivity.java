@@ -108,7 +108,7 @@ public class GenerateOutfitActivity extends AppCompatActivity {
         }
 
         cancel_button.setOnClickListener(v -> {
-            Intent intent = new Intent(GenerateOutfitActivity.this, HomeActivity.class);
+            Intent intent = new Intent(GenerateOutfitActivity.this, ExploreActivity.class);
             startActivity(intent);
             finish();
         });
@@ -180,7 +180,7 @@ public class GenerateOutfitActivity extends AppCompatActivity {
             FirebaseFirestore db = FirebaseFirestore.getInstance();
             db.collection("outfitsItems").add(outfitItems);
         }
-        Intent intent = new Intent(GenerateOutfitActivity.this, HomeActivity.class);
+        Intent intent = new Intent(GenerateOutfitActivity.this, ExploreActivity.class);
         startActivity(intent);
         finish();
 

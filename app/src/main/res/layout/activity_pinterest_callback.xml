@@ -12,6 +12,8 @@
       android:text="Your Pinterest Profile"
       android:padding="20dp"
       android:textSize="26sp"
+      android:layout_marginTop="20dp"
+      android:textColor="@color/black"
       app:layout_constraintEnd_toEndOf="parent"
       app:layout_constraintStart_toStartOf="parent"
       app:layout_constraintTop_toTopOf="parent" />
@@ -21,10 +23,11 @@
       android:layout_height="wrap_content"
       app:cardCornerRadius="30dp"
       android:layout_margin="30dp"
+      app:cardBackgroundColor="@color/color5"
       app:layout_constraintBottom_toBottomOf="parent"
       app:layout_constraintEnd_toEndOf="parent"
       app:layout_constraintStart_toStartOf="parent"
-      app:layout_constraintTop_toTopOf="@+id/pinterestProfileTV">
+      app:layout_constraintTop_toBottomOf="@+id/pinterestProfileTV">
 
     <androidx.constraintlayout.widget.ConstraintLayout
         android:layout_width="wrap_content"
@@ -36,7 +39,6 @@
           android:layout_width="300dp"
           android:layout_height="300dp"
           android:layout_margin="50dp"
-          android:layout_marginTop="16dp"
           android:src="@drawable/ic_profile_default"
           app:layout_constraintEnd_toEndOf="parent"
           app:layout_constraintStart_toStartOf="parent"
@@ -48,8 +50,9 @@
           android:layout_height="wrap_content"
           android:layout_marginTop="8dp"
           android:text="Username"
+          android:gravity="center"
           android:textAlignment="center"
-          android:textSize="24sp"
+          android:textSize="16sp"
           app:layout_constraintEnd_toEndOf="parent"
           app:layout_constraintStart_toStartOf="parent"
           app:layout_constraintTop_toBottomOf="@id/ivProfileImage" />
@@ -60,7 +63,8 @@
           android:layout_height="wrap_content"
           android:layout_marginTop="8dp"
           android:text="Business Name"
-          android:textSize="24sp"
+          android:textSize="16sp"
+          android:gravity="center"
           app:layout_constraintEnd_toEndOf="parent"
           app:layout_constraintStart_toStartOf="parent"
           app:layout_constraintTop_toBottomOf="@id/tvUsername" />
@@ -70,7 +74,8 @@
           android:layout_width="wrap_content"
           android:layout_height="wrap_content"
           android:text="Followers"
-          android:textSize="24sp"
+          android:gravity="center"
+          android:textSize="16sp"
           app:layout_constraintEnd_toEndOf="parent"
           app:layout_constraintStart_toStartOf="parent"
           app:layout_constraintTop_toBottomOf="@id/tvBusinessName" />
@@ -80,7 +85,8 @@
           android:layout_width="wrap_content"
           android:layout_height="wrap_content"
           android:text="Boards"
-          android:textSize="24sp"
+          android:textSize="16sp"
+          android:gravity="center"
           app:layout_constraintEnd_toEndOf="parent"
           app:layout_constraintStart_toStartOf="parent"
           app:layout_constraintTop_toBottomOf="@id/tvFollowers" />
@@ -90,7 +96,8 @@
           android:layout_width="wrap_content"
           android:layout_height="wrap_content"
           android:text="Pins"
-          android:textSize="24sp"
+          android:gravity="center"
+          android:textSize="16sp"
           app:layout_constraintEnd_toEndOf="parent"
           app:layout_constraintStart_toStartOf="parent"
           app:layout_constraintTop_toBottomOf="@id/tvBoards" />
@@ -100,8 +107,12 @@
           android:layout_width="wrap_content"
           android:layout_height="wrap_content"
           android:layout_marginTop="16dp"
-          android:text="About"
-          android:textSize="24sp"
+          android:text="Create pins with our app in Pinterest!"
+          android:textSize="16sp"
+          android:textAlignment="center"
+          android:textColor="@color/color1"
+          android:textStyle="bold
+"
           app:layout_constraintEnd_toEndOf="parent"
           app:layout_constraintStart_toStartOf="parent"
           app:layout_constraintTop_toBottomOf="@id/tvPins" />

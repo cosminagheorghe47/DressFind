@@ -33,7 +33,7 @@ public class LoginActivity extends AppCompatActivity {
         FirebaseUser currentUser = auth.getCurrentUser();
         if (currentUser != null) {
             Log.i("LoginActivity", "User is already signed in: " + currentUser.getEmail());
-            startActivity(new Intent(LoginActivity.this, HomeActivity.class));
+            startActivity(new Intent(LoginActivity.this, ExploreActivity.class));
             finish();
         }
 
@@ -64,7 +64,7 @@ public class LoginActivity extends AppCompatActivity {
                                 if (task.isSuccessful()) {
                                     FirebaseUser user = auth.getCurrentUser();
                                     Log.i("LoginActivity", "User signed in: " + user.getEmail());
-                                    startActivity(new Intent(LoginActivity.this, HomeActivity.class));
+                                    startActivity(new Intent(LoginActivity.this, ExploreActivity.class));
                                 } else {
                                     Log.e("LoginActivity", "User login failed: " + task.getException().getMessage());
                                     Toast.makeText(LoginActivity.this, "Authentication failed" , Toast.LENGTH_SHORT).show();

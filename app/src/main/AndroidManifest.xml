@@ -71,7 +71,11 @@
             android:exported="false" />
         <activity
             android:name=".activities.ExploreActivity"
-            android:exported="false" />
+            android:exported="true" >
+            <intent-filter>
+                <action android:name="android.intent.action.MAIN" />
+            </intent-filter>
+        </activity>
         <activity
             android:name=".activities.ProfileActivity"
             android:exported="false" />
@@ -80,10 +84,7 @@
             android:exported="false" />
         <activity
             android:name=".activities.HomeActivity"
-            android:exported="true">
-            <intent-filter>
-                <action android:name="android.intent.action.MAIN" />
-            </intent-filter>
+            android:exported="false">
         </activity>
         <activity
             android:name=".activities.RegisterActivity"
