@@ -124,8 +124,6 @@ public class OutfitDetailsActivity extends AppCompatActivity {
         }
 
         titlePage = findViewById(R.id.titlePage);
-         
-
 
         bottomNavigationView = findViewById(R.id.includeNavBar);
         bottomNavigationView.setSelectedItemId(R.id.nav_outfits);
