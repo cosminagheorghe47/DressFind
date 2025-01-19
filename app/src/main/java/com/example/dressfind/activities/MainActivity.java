@@ -40,6 +40,7 @@ import android.widget.ImageView;
 import android.widget.Toast;
 
 import com.example.dressfind.R;
+import com.example.dressfind.models.PredictionResponse;
 import com.example.dressfind.adapters.MatchingImageAdapter;
 import com.example.dressfind.models.MatchingImage;
 import com.example.dressfind.models.ScannedImage;
@@ -263,19 +264,6 @@ public class MainActivity extends AppCompatActivity implements ProductSearchTask
             } else {
                 Toast.makeText(this, "Camera permission is required to take a picture", Toast.LENGTH_SHORT).show();
             }
-        }
-    }
-
-    public class PredictionResponse {
-        private String className;
-        private String probability;
-
-        public String getClassName() {
-            return className;
-        }
-
-        public String getProbability() {
-            return probability;
         }
     }
 
