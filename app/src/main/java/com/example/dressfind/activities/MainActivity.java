@@ -288,7 +288,7 @@ public class MainActivity extends AppCompatActivity implements ProductSearchTask
     public void sendImageToServer(File file) {
         // Configurăm Retrofit
         Retrofit retrofit = new Retrofit.Builder()
-                .baseUrl("https://dressfindmodel-gs5bx7pzea-lm.a.run.app")
+                .baseUrl("https://dressfindml-118142837315.europe-central2.run.app")
                 .addConverterFactory(GsonConverterFactory.create())
                 .build();
 
@@ -312,6 +312,8 @@ public class MainActivity extends AppCompatActivity implements ProductSearchTask
                             "with a probability of " + response.body().getProbability();
                     Toast.makeText(getApplicationContext(), result, Toast.LENGTH_LONG).show();
                 } else {
+                    int statusCode = response.code(); // Get HTTP status code
+                    Log.e("HTTP Error", "Status Code: " + statusCode);
                     Toast.makeText(getApplicationContext(), "Preprocessing Error", Toast.LENGTH_LONG).show();
                 }
             }
