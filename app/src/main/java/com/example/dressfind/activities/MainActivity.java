@@ -8,6 +8,21 @@ import androidx.core.content.ContextCompat;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
+import okhttp3.MultipartBody;
+import retrofit2.Call;
+import retrofit2.http.Multipart;
+import retrofit2.http.POST;
+import retrofit2.http.Part;
+
+import okhttp3.MediaType;
+import okhttp3.MultipartBody;
+import okhttp3.RequestBody;
+import retrofit2.Retrofit;
+import retrofit2.converter.gson.GsonConverterFactory;
+import retrofit2.Call;
+import retrofit2.Callback;
+import retrofit2.Response;
+
 import android.Manifest;
 import android.app.Dialog;
 import android.content.Intent;
@@ -17,6 +32,7 @@ import android.net.Uri;
 import android.os.Bundle;
 import android.provider.MediaStore;
 import android.util.Log;
+import android.view.View;
 import android.view.Window;
 import android.view.WindowManager;
 import android.widget.Button;
@@ -30,7 +46,6 @@ import com.example.dressfind.models.ScannedImage;
 import com.example.dressfind.services.AppContext;
 import com.example.dressfind.services.CameraService;
 import com.example.dressfind.services.ImageAnalyzer;
-import com.example.dressfind.services.ImageProcessor;
 import com.example.dressfind.services.ImageUploader;
 import com.example.dressfind.services.ProductSearchTask;
 import com.google.firebase.FirebaseApp;
@@ -50,7 +65,6 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
-
 public class MainActivity extends AppCompatActivity implements ProductSearchTask.ProductSearchCallback {
     private FirebaseFirestore db;
     private CameraService cameraService;
@@ -62,8 +76,9 @@ public class MainActivity extends AppCompatActivity implements ProductSearchTask
     private List<MatchingImage> matchingImages = new ArrayList<>();
     private ProductSearchTask productSearchTask;
     private FirebaseAuth auth;
+    private Boolean AiButton = false;
 
-    private boolean googleSearch;
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -147,21 +162,19 @@ public class MainActivity extends AppCompatActivity implements ProductSearchTask
                 ActivityCompat.requestPermissions(MainActivity.this,
                         new String[]{Manifest.permission.CAMERA}, 100);
             }
-            googleSearch = true;
             popupDialog.dismiss();
         });
 
         btnAddWardrobe.setOnClickListener(v -> {
+            AiButton = true;
             if (ContextCompat.checkSelfPermission(MainActivity.this, Manifest.permission.CAMERA)
                     == PackageManager.PERMISSION_GRANTED) {
+                AiButton = true;
                 cameraService.openCamera(cameraLauncher);
             } else {
                 ActivityCompat.requestPermissions(MainActivity.this,
                         new String[]{Manifest.permission.CAMERA}, 100);
             }
-
-            Toast.makeText(MainActivity.this, "Add to Wardrobe action", Toast.LENGTH_SHORT).show();
-            googleSearch = false;
             popupDialog.dismiss();
         });
 
@@ -208,26 +221,10 @@ public class MainActivity extends AppCompatActivity implements ProductSearchTask
             if (croppedImageUri != null) {
                 Bitmap croppedBitmap = getBitmapFromUri(croppedImageUri);
 
-                if(googleSearch){
-                    // Urcă imaginea decupată pe Firebase
-                    uploadToFirebase(croppedBitmap);
-                    // Afișează imaginea decupată în ImageView
-                    capturedImage.setImageURI(croppedImageUri);
-                } else {
-                    // delete background
-                    ImageProcessor imageProcessor = new ImageProcessor();
-
-                    imageProcessor.removeBackgroundAsync(croppedImageUri, bitmap -> {
-                        if (bitmap != null) {
-                            capturedImage.setImageBitmap(bitmap);
-                        } else {
-                            Log.e("onBackgroundRemoved", "Failed to remove background");
-                        }
-                    });
-
-
-                }
-
+                // Urcă imaginea decupată pe Firebase
+                uploadToFirebase(croppedBitmap);
+                // Afișează imaginea decupată în ImageView
+                capturedImage.setImageURI(croppedImageUri);
 
             }
         } else if (requestCode == UCrop.REQUEST_CROP && resultCode == UCrop.RESULT_ERROR) {
@@ -255,6 +252,7 @@ public class MainActivity extends AppCompatActivity implements ProductSearchTask
         }
     }
 
+
     @Override
     public void onRequestPermissionsResult(int requestCode, String[] permissions, int[] grantResults) {
         super.onRequestPermissionsResult(requestCode, permissions, grantResults);
@@ -268,7 +266,60 @@ public class MainActivity extends AppCompatActivity implements ProductSearchTask
         }
     }
 
+    public class PredictionResponse {
+        private String className;
+        private String probability;
 
+        public String getClassName() {
+            return className;
+        }
+
+        public String getProbability() {
+            return probability;
+        }
+    }
+
+    public interface ApiService {
+        @Multipart
+        @POST("/predict")
+        Call<PredictionResponse> uploadImage(@Part MultipartBody.Part file);
+    }
+
+    public void sendImageToServer(File file) {
+        // Configurăm Retrofit
+        Retrofit retrofit = new Retrofit.Builder()
+                .baseUrl("https://dressfindmodel-gs5bx7pzea-lm.a.run.app")
+                .addConverterFactory(GsonConverterFactory.create())
+                .build();
+
+        ApiService apiService = retrofit.create(ApiService.class);
+
+        // Convertim imaginea într-un RequestBody
+        RequestBody requestFile = RequestBody.create(MediaType.parse("image/*"), file);
+
+        // Creăm un MultipartBody.Part pentru Retrofit
+        MultipartBody.Part body = MultipartBody.Part.createFormData("file", file.getName(), requestFile);
+
+        // Facem cererea
+        Call<PredictionResponse> call = apiService.uploadImage(body);
+        call.enqueue(new Callback<PredictionResponse>() {
+            @Override
+            public void onResponse(Call<PredictionResponse> call, Response<PredictionResponse> response) {
+                if (response.isSuccessful() && response.body() != null) {
+                    String result = "Predicted item: " + response.body().getClassName() +
+                            "with a probability of " + response.body().getProbability();
+                    Toast.makeText(getApplicationContext(), result, Toast.LENGTH_LONG).show();
+                } else {
+                    Toast.makeText(getApplicationContext(), "Preprocessing Error", Toast.LENGTH_LONG).show();
+                }
+            }
+
+            @Override
+            public void onFailure(Call<PredictionResponse> call, Throwable t) {
+                Toast.makeText(getApplicationContext(), "Error: " + t.getMessage(), Toast.LENGTH_LONG).show();
+            }
+        });
+    }
     public void uploadToFirebase(Bitmap photo) {
         ByteArrayOutputStream baos = new ByteArrayOutputStream();
         photo.compress(Bitmap.CompressFormat.JPEG, 100, baos);
@@ -305,26 +356,36 @@ public class MainActivity extends AppCompatActivity implements ProductSearchTask
                 }
 
                 ImageUploader imageUploader = new ImageUploader();
-                imageUploader.callVisionAPI(uri.toString(), new ImageUploader.CropCallback() {
-                    @Override
-                    public void onCroppedImageUrl(String croppedImageUrl) {
-                        ImageAnalyzer imageAnalyzer = new ImageAnalyzer();
-                        imageAnalyzer.setCallback(new ImageAnalyzer.ProductSearchCallback() {
-                            @Override
-                            public void onMatchingImagesFound(List<MatchingImage> matchingImages) {
-                                matchingImageAdapter.updateData(matchingImages);
-                                matchingImageAdapter.notifyDataSetChanged();
-                            }
-                        });
+                if(!AiButton){
+                    imageUploader.callVisionAPI(uri.toString(), new ImageUploader.CropCallback() {
+                        @Override
+                        public void onCroppedImageUrl(String croppedImageUrl) {
+                            ImageAnalyzer imageAnalyzer = new ImageAnalyzer();
+                            imageAnalyzer.setCallback(new ImageAnalyzer.ProductSearchCallback() {
+                                @Override
+                                public void onMatchingImagesFound(List<MatchingImage> matchingImages) {
+                                    matchingImageAdapter.updateData(matchingImages);
+                                    matchingImageAdapter.notifyDataSetChanged();
+                                }
+                            });
 
-                        imageAnalyzer.execute(croppedImageUrl);
-                    }
+                            imageAnalyzer.execute(croppedImageUrl);
+                        }
 
-                    @Override
-                    public void onError(Exception e) {
-                        Log.e("MainActivity", "Error processing image", e);
+                        @Override
+                        public void onError(Exception e) {
+                            Log.e("MainActivity", "Error processing image", e);
+                        }
+                    });
+                } else {
+                    File croppedImageFile = new File(getCacheDir(), "cropped_image.jpg");
+                    if (croppedImageFile.exists()) {
+                        sendImageToServer(croppedImageFile); // Call Retrofit function with the existing cropped image file
+                    } else {
+                        Log.e("MainActivity", "Cropped image file does not exist!");
+                        Toast.makeText(this, "Error: Cropped image not found.", Toast.LENGTH_SHORT).show();
                     }
-                });
+                }
             });
         }).addOnFailureListener(e -> {
             Log.e("FirebaseStorage", "Image upload failed", e);
