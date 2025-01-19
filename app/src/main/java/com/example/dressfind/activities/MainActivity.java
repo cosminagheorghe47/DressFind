@@ -305,6 +305,8 @@ public class MainActivity extends AppCompatActivity implements ProductSearchTask
         call.enqueue(new Callback<PredictionResponse>() {
             @Override
             public void onResponse(Call<PredictionResponse> call, Response<PredictionResponse> response) {
+                Log.d("Request", file.getName());
+                Log.d("Response", response.message());
                 if (response.isSuccessful() && response.body() != null) {
                     String result = "Predicted item: " + response.body().getClassName() +
                             "with a probability of " + response.body().getProbability();
