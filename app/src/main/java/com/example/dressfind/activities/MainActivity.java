@@ -226,10 +226,9 @@ public class MainActivity extends AppCompatActivity implements ProductSearchTask
 
             if (croppedImageUri != null) {
                 Bitmap croppedBitmap = getBitmapFromUri(croppedImageUri);
+                uploadToFirebase(croppedBitmap);
 
                 if(googleSearch){
-                    // Urcă imaginea decupată pe Firebase
-                    uploadToFirebase(croppedBitmap);
                     // Afișează imaginea decupată în ImageView
                     capturedImage.setImageURI(croppedImageUri);
                 } else {
