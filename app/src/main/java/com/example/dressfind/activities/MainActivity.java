@@ -15,11 +15,9 @@ import retrofit2.http.POST;
 import retrofit2.http.Part;
 
 import okhttp3.MediaType;
-import okhttp3.MultipartBody;
 import okhttp3.RequestBody;
 import retrofit2.Retrofit;
 import retrofit2.converter.gson.GsonConverterFactory;
-import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
 
@@ -32,7 +30,6 @@ import android.net.Uri;
 import android.os.Bundle;
 import android.provider.MediaStore;
 import android.util.Log;
-import android.view.View;
 import android.view.Window;
 import android.view.WindowManager;
 import android.widget.Button;
@@ -61,7 +58,9 @@ import com.yalantis.ucrop.UCrop;
 
 import java.io.ByteArrayOutputStream;
 import java.io.File;
+import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
+import java.io.IOException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
@@ -244,8 +243,6 @@ public class MainActivity extends AppCompatActivity implements ProductSearchTask
                         }
                     });
                 }
-
-
             }
         } else if (requestCode == UCrop.REQUEST_CROP && resultCode == UCrop.RESULT_ERROR) {
             Throwable cropError = UCrop.getError(data);
@@ -271,7 +268,6 @@ public class MainActivity extends AppCompatActivity implements ProductSearchTask
             return null;
         }
     }
-
 
     @Override
     public void onRequestPermissionsResult(int requestCode, String[] permissions, int[] grantResults) {
@@ -331,6 +327,21 @@ public class MainActivity extends AppCompatActivity implements ProductSearchTask
             }
         });
     }
+
+    private File saveBitmapToFile(Bitmap bitmap, String fileName) {
+        File file = new File(getCacheDir(), fileName);
+        try (FileOutputStream fos = new FileOutputStream(file)) {
+            bitmap.compress(Bitmap.CompressFormat.JPEG, 100, fos);
+            fos.flush();
+            Log.d("MainActivity", "File saved successfully: " + file.getAbsolutePath());
+            return file;
+        } catch (IOException e) {
+            e.printStackTrace();
+            Log.e("MainActivity", "Error saving bitmap to file: " + e.getMessage());
+            return null;
+        }
+    }
+
     public void uploadToFirebase(Bitmap photo) {
         ByteArrayOutputStream baos = new ByteArrayOutputStream();
         photo.compress(Bitmap.CompressFormat.JPEG, 100, baos);
@@ -388,14 +399,25 @@ public class MainActivity extends AppCompatActivity implements ProductSearchTask
                             Log.e("MainActivity", "Error processing image", e);
                         }
                     });
-                } else {
-                    File croppedImageFile = new File(getCacheDir(), "cropped_image.jpg");
-                    if (croppedImageFile.exists()) {
-                        sendImageToServer(croppedImageFile); // Call Retrofit function with the existing cropped image file
-                    } else {
-                        Log.e("MainActivity", "Cropped image file does not exist!");
-                        Toast.makeText(this, "Error: Cropped image not found.", Toast.LENGTH_SHORT).show();
-                    }
+                } else{
+
+                    ImageProcessor imageProcessor = new ImageProcessor();
+                    imageProcessor.removeBackgroundAsync(Uri.parse(uri.toString()), bitmap -> {
+                        if (bitmap != null) {
+                            File noBgFile = new File(getCacheDir(), "IMG_bg.jpg");
+
+                            if (noBgFile.exists()) {
+                                Log.d("MainActivity", "Sending the file to the server: " + noBgFile.getAbsolutePath());
+                                sendImageToServer(noBgFile);
+                            } else {
+                                Log.e("MainActivity", "Failed to save the processed image without background.");
+                                Toast.makeText(this, "Error: Processed image not found.", Toast.LENGTH_SHORT).show();
+                            }
+                        } else {
+                            Log.e("MainActivity", "Failed to process image without background.");
+                            Toast.makeText(this, "Error processing image.", Toast.LENGTH_SHORT).show();
+                        }
+                    });
                 }
             });
         }).addOnFailureListener(e -> {
