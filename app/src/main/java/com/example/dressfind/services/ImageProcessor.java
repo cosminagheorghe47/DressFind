@@ -11,6 +11,7 @@ import com.google.firebase.storage.UploadTask;
 
 import java.io.ByteArrayOutputStream;
 import java.io.File;
+import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 
@@ -78,9 +79,39 @@ public class ImageProcessor {
         @Override
         protected void onPostExecute(Bitmap result) {
             super.onPostExecute(result);
-            uploadToFirebase(result);
-            if (listener != null) {
-                listener.onBackgroundRemoved(result);
+            if (result != null) {
+                // Save the processed bitmap to a file
+                File savedFile = saveBitmapToFile(result, "IMG_bg.jpg");
+                if (savedFile != null) {
+                    Log.d("ImageProcessor", "Processed image saved locally: " + savedFile.getAbsolutePath());
+                } else {
+                    Log.e("ImageProcessor", "Failed to save processed image locally.");
+                }
+
+                // Upload the processed image to Firebase
+                uploadToFirebase(result);
+
+                // Notify listener with the result
+                if (listener != null) {
+                    listener.onBackgroundRemoved(result);
+                }
+            } else {
+                Log.e("ImageProcessor", "Background removal failed, result is null.");
+                if (listener != null) {
+                    listener.onBackgroundRemoved(null);
+                }
+            }
+        }
+
+        private File saveBitmapToFile(Bitmap bitmap, String fileName) {
+            File file = new File(firebaseStorage.getApp().getApplicationContext().getCacheDir(), fileName);
+            try (FileOutputStream fos = new FileOutputStream(file)) {
+                bitmap.compress(Bitmap.CompressFormat.JPEG, 100, fos);
+                fos.flush();
+                return file;
+            } catch (IOException e) {
+                e.printStackTrace();
+                return null;
             }
         }
     }
