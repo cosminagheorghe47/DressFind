@@ -226,9 +226,9 @@ public class MainActivity extends AppCompatActivity implements ProductSearchTask
 
             if (croppedImageUri != null) {
                 Bitmap croppedBitmap = getBitmapFromUri(croppedImageUri);
-                uploadToFirebase(croppedBitmap);
 
                 if(googleSearch){
+                    uploadToFirebase(croppedBitmap);
                     // Afișează imaginea decupată în ImageView
                     capturedImage.setImageURI(croppedImageUri);
                 } else {
@@ -237,8 +237,19 @@ public class MainActivity extends AppCompatActivity implements ProductSearchTask
                     imageProcessor.removeBackgroundAsync(croppedImageUri, bitmap -> {
                         if (bitmap != null) {
                             capturedImage.setImageBitmap(bitmap);
+                            File noBgFile = new File(getCacheDir(), "IMG_bg.jpg");
+                            if (noBgFile.exists()) {
+                                Log.d("MainActivity", "Sending the file to the server: " + noBgFile.getAbsolutePath());
+                                sendImageToServer(noBgFile);
+                            } else {
+                                Log.e("MainActivity", "Failed to save the processed image without background.");
+                                Toast.makeText(this, "Error: Processed image not found.", Toast.LENGTH_SHORT).show();
+                            }
                         } else {
                             Log.e("onBackgroundRemoved", "Failed to remove background");
+                            Log.e("MainActivity", "Failed to process image without background.");
+                            Toast.makeText(this, "Error processing image.", Toast.LENGTH_SHORT).show();
+
                         }
                     });
                 }
@@ -399,24 +410,6 @@ public class MainActivity extends AppCompatActivity implements ProductSearchTask
                         }
                     });
                 } else{
-
-                    ImageProcessor imageProcessor = new ImageProcessor();
-                    imageProcessor.removeBackgroundAsync(Uri.parse(uri.toString()), bitmap -> {
-                        if (bitmap != null) {
-                            File noBgFile = new File(getCacheDir(), "IMG_bg.jpg");
-
-                            if (noBgFile.exists()) {
-                                Log.d("MainActivity", "Sending the file to the server: " + noBgFile.getAbsolutePath());
-                                sendImageToServer(noBgFile);
-                            } else {
-                                Log.e("MainActivity", "Failed to save the processed image without background.");
-                                Toast.makeText(this, "Error: Processed image not found.", Toast.LENGTH_SHORT).show();
-                            }
-                        } else {
-                            Log.e("MainActivity", "Failed to process image without background.");
-                            Toast.makeText(this, "Error processing image.", Toast.LENGTH_SHORT).show();
-                        }
-                    });
                 }
             });
         }).addOnFailureListener(e -> {
