@@ -237,7 +237,7 @@ public class MainActivity extends AppCompatActivity implements ProductSearchTask
                     imageProcessor.removeBackgroundAsync(croppedImageUri, bitmap -> {
                         if (bitmap != null) {
                             capturedImage.setImageBitmap(bitmap);
-                            File noBgFile = new File(getCacheDir(), "IMG_bg.jpg");
+                            File noBgFile = saveBitmapToFile(bitmap, "IMG_bg.jpg");
                             if (noBgFile.exists()) {
                                 Log.d("MainActivity", "Sending the file to the server: " + noBgFile.getAbsolutePath());
                                 sendImageToServer(noBgFile);

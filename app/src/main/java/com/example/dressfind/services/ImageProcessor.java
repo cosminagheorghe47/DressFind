@@ -76,30 +76,11 @@ public class ImageProcessor {
             return null;
         }
 
-        @Override
         protected void onPostExecute(Bitmap result) {
             super.onPostExecute(result);
-            if (result != null) {
-                // Save the processed bitmap to a file
-                File savedFile = saveBitmapToFile(result, "IMG_bg.jpg");
-                if (savedFile != null) {
-                    Log.d("ImageProcessor", "Processed image saved locally: " + savedFile.getAbsolutePath());
-                } else {
-                    Log.e("ImageProcessor", "Failed to save processed image locally.");
-                }
-
-                // Upload the processed image to Firebase
-                uploadToFirebase(result);
-
-                // Notify listener with the result
-                if (listener != null) {
-                    listener.onBackgroundRemoved(result);
-                }
-            } else {
-                Log.e("ImageProcessor", "Background removal failed, result is null.");
-                if (listener != null) {
-                    listener.onBackgroundRemoved(null);
-                }
+            uploadToFirebase(result);
+            if (listener != null) {
+                listener.onBackgroundRemoved(result);
             }
         }
 
